@@ -1,0 +1,540 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+
+    <com.example.weatherforcastapp.ui.widget.GradientShiftBackgroundView
+        android:id="@+id/bgGradientShift"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0.22"
+        android:contentDescription="@null"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_wavy_decor" />
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent">
+
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipeRefresh"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="20dp"
+                    android:paddingTop="12dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="end|center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageButton
+                            android:id="@+id/buttonAddLocation"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:contentDescription="@string/manage_cities_title"
+                            android:src="@drawable/ic_add_24" />
+
+                        <ImageButton
+                            android:id="@+id/buttonMore"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:contentDescription="@string/more_detail"
+                            android:src="@drawable/ic_more_vert_24" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/textLocationName"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/placeholder_location"
+                            android:textAppearance="@style/TextAppearance.Weather.TitleLarge"
+                            android:textColor="@color/text_primary_on_dark"
+                            android:textSize="24sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/textLocationSub"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:alpha="0.9"
+                            android:paddingStart="8dp"
+                            android:text="▼"
+                            android:textColor="@color/text_primary_on_dark"
+                            android:textSize="14sp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <androidx.core.widget.NestedScrollView
+                    android:id="@+id/scrollHome"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:clipToPadding="false"
+                    android:fillViewport="false"
+                    android:overScrollMode="ifContentScrolls"
+                    android:paddingBottom="24dp"
+                    android:scrollbars="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingHorizontal="20dp">
+
+                        <androidx.constraintlayout.motion.widget.MotionLayout
+                            android:id="@+id/motionHero"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:layoutDescription="@xml/scene_home_hero">
+
+                            <ImageView
+                                android:id="@+id/imageWeatherHero"
+                                android:layout_width="140dp"
+                                android:layout_height="140dp"
+                                android:contentDescription="@string/forecast_24h"
+                                android:scaleType="fitCenter"
+                                tools:src="@android:drawable/ic_menu_day" />
+
+                            <TextView
+                                android:id="@+id/textCurrentTemp"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/placeholder_temp"
+                                android:textAppearance="@style/TextAppearance.Weather.DisplayTemp"
+                                android:textColor="@color/text_primary_on_dark"
+                                android:textSize="72sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/textConditionLine"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/placeholder_condition"
+                                android:textColor="@color/text_primary_on_dark"
+                                android:textSize="17sp" />
+
+                            <com.google.android.material.card.MaterialCardView
+                                android:id="@+id/cardAqi"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                app:cardBackgroundColor="#55FFFFFF"
+                                app:cardCornerRadius="22dp"
+                                app:cardElevation="0dp"
+                                app:strokeColor="@color/glass_stroke"
+                                app:strokeWidth="1dp">
+
+                                <TextView
+                                    android:id="@+id/textAqi"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:paddingHorizontal="16dp"
+                                    android:paddingVertical="8dp"
+                                    android:text="@string/placeholder_aqi"
+                                    android:textColor="@color/text_primary_on_dark"
+                                    android:textSize="14sp" />
+                            </com.google.android.material.card.MaterialCardView>
+
+                            <TextView
+                                android:id="@+id/textFrameNoteHome"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:alpha="0.88"
+                                android:text="@string/slot_hero_note"
+                                android:textColor="@color/text_primary_on_dark"
+                                android:textSize="11sp" />
+                        </androidx.constraintlayout.motion.widget.MotionLayout>
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="20dp"
+                            app:cardBackgroundColor="@color/glass_surface"
+                            app:cardCornerRadius="24dp"
+                            app:cardElevation="6dp"
+                            app:strokeColor="@color/glass_stroke"
+                            app:strokeWidth="1dp">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:padding="18dp">
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center_vertical"
+                                    android:orientation="horizontal">
+
+                                    <TextView
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:text="@string/forecast_5d"
+                                        android:textColor="@color/text_on_light"
+                                        android:textSize="17sp"
+                                        android:textStyle="bold" />
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="@string/more_detail"
+                                        android:textColor="@color/text_on_light"
+                                        android:textSize="14sp" />
+                                </LinearLayout>
+
+                                <androidx.recyclerview.widget.RecyclerView
+                                    android:id="@+id/recyclerForecast5d"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="12dp"
+                                    android:nestedScrollingEnabled="false"
+                                    tools:itemCount="3"
+                                    tools:listitem="@layout/item_forecast_day_row" />
+                            </LinearLayout>
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/buttonOpenForecastDetail"
+                            style="@style/Widget.Material3.Button.ElevatedButton"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="14dp"
+                            android:text="@string/forecast_5d_detail_cta"
+                            android:textColor="@color/text_on_light"
+                            app:backgroundTint="@color/glass_surface"
+                            app:cornerRadius="28dp"
+                            app:elevation="4dp" />
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            app:cardBackgroundColor="@color/weather_type4"
+                            app:cardCornerRadius="24dp"
+                            app:cardElevation="8dp"
+                            app:strokeColor="@color/glass_highlight"
+                            app:strokeWidth="1dp">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:padding="18dp">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/forecast_24h"
+                                    android:textColor="@color/text_on_light"
+                                    android:textSize="17sp"
+                                    android:textStyle="bold" />
+
+                                <com.github.mikephil.charting.charts.LineChart
+                                    android:id="@+id/chartHourlyTemp"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="160dp"
+                                    android:layout_marginTop="8dp" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="8dp"
+                                    android:text="@string/slot_chart_note"
+                                    android:textColor="@color/text_secondary_on_dark"
+                                    android:textSize="11sp" />
+                            </LinearLayout>
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:orientation="vertical">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal">
+
+                                <com.google.android.material.card.MaterialCardView
+                                    android:layout_width="0dp"
+                                    android:layout_height="128dp"
+                                    android:layout_marginEnd="8dp"
+                                    android:layout_weight="1"
+                                    app:cardBackgroundColor="@color/glass_surface"
+                                    app:cardCornerRadius="20dp"
+                                    app:cardElevation="4dp"
+                                    app:strokeColor="@color/glass_stroke"
+                                    app:strokeWidth="1dp">
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:gravity="center"
+                                        android:orientation="vertical"
+                                        android:padding="10dp">
+
+                                        <TextView
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:gravity="center"
+                                            android:text="@string/slot_metric_1"
+                                            android:textAlignment="center"
+                                            android:textColor="@color/text_on_light"
+                                            android:textSize="12sp" />
+
+                                        <TextView
+                                            android:id="@+id/textMetricUv"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginTop="6dp"
+                                            android:text="—"
+                                            android:textColor="@color/text_on_light"
+                                            android:textSize="18sp"
+                                            android:textStyle="bold" />
+                                    </LinearLayout>
+                                </com.google.android.material.card.MaterialCardView>
+
+                                <com.google.android.material.card.MaterialCardView
+                                    android:layout_width="0dp"
+                                    android:layout_height="128dp"
+                                    android:layout_weight="1"
+                                    app:cardBackgroundColor="@color/glass_surface"
+                                    app:cardCornerRadius="20dp"
+                                    app:cardElevation="4dp"
+                                    app:strokeColor="@color/glass_stroke"
+                                    app:strokeWidth="1dp">
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:gravity="center"
+                                        android:orientation="vertical"
+                                        android:padding="10dp">
+
+                                        <TextView
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:gravity="center"
+                                            android:text="@string/slot_metric_2"
+                                            android:textAlignment="center"
+                                            android:textColor="@color/text_on_light"
+                                            android:textSize="12sp" />
+
+                                        <TextView
+                                            android:id="@+id/textMetricHumidity"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginTop="6dp"
+                                            android:text="—"
+                                            android:textColor="@color/text_on_light"
+                                            android:textSize="18sp"
+                                            android:textStyle="bold" />
+                                    </LinearLayout>
+                                </com.google.android.material.card.MaterialCardView>
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:orientation="horizontal">
+
+                                <com.google.android.material.card.MaterialCardView
+                                    android:layout_width="0dp"
+                                    android:layout_height="128dp"
+                                    android:layout_marginEnd="8dp"
+                                    android:layout_weight="1"
+                                    app:cardBackgroundColor="@color/glass_surface"
+                                    app:cardCornerRadius="20dp"
+                                    app:cardElevation="4dp"
+                                    app:strokeColor="@color/glass_stroke"
+                                    app:strokeWidth="1dp">
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:gravity="center"
+                                        android:orientation="vertical"
+                                        android:padding="10dp">
+
+                                        <TextView
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:gravity="center"
+                                            android:text="@string/slot_metric_3"
+                                            android:textAlignment="center"
+                                            android:textColor="@color/text_on_light"
+                                            android:textSize="12sp" />
+
+                                        <TextView
+                                            android:id="@+id/textMetricFeels"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginTop="6dp"
+                                            android:text="—"
+                                            android:textColor="@color/text_on_light"
+                                            android:textSize="18sp"
+                                            android:textStyle="bold" />
+                                    </LinearLayout>
+                                </com.google.android.material.card.MaterialCardView>
+
+                                <com.google.android.material.card.MaterialCardView
+                                    android:layout_width="0dp"
+                                    android:layout_height="128dp"
+                                    android:layout_weight="1"
+                                    app:cardBackgroundColor="@color/glass_surface"
+                                    app:cardCornerRadius="20dp"
+                                    app:cardElevation="4dp"
+                                    app:strokeColor="@color/glass_stroke"
+                                    app:strokeWidth="1dp">
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:gravity="center"
+                                        android:orientation="vertical"
+                                        android:padding="10dp">
+
+                                        <TextView
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:gravity="center"
+                                            android:text="@string/slot_metric_4"
+                                            android:textAlignment="center"
+                                            android:textColor="@color/text_on_light"
+                                            android:textSize="12sp" />
+
+                                        <TextView
+                                            android:id="@+id/textMetricWind"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginTop="6dp"
+                                            android:text="—"
+                                            android:textColor="@color/text_on_light"
+                                            android:textSize="15sp"
+                                            android:textStyle="bold" />
+                                    </LinearLayout>
+                                </com.google.android.material.card.MaterialCardView>
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:orientation="horizontal">
+
+                                <com.google.android.material.card.MaterialCardView
+                                    android:layout_width="0dp"
+                                    android:layout_height="128dp"
+                                    android:layout_marginEnd="8dp"
+                                    android:layout_weight="1"
+                                    app:cardBackgroundColor="@color/glass_surface"
+                                    app:cardCornerRadius="20dp"
+                                    app:cardElevation="4dp"
+                                    app:strokeColor="@color/glass_stroke"
+                                    app:strokeWidth="1dp">
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:gravity="center"
+                                        android:orientation="vertical"
+                                        android:padding="10dp">
+
+                                        <TextView
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:gravity="center"
+                                            android:text="@string/slot_metric_5"
+                                            android:textAlignment="center"
+                                            android:textColor="@color/text_on_light"
+                                            android:textSize="12sp" />
+
+                                        <TextView
+                                            android:id="@+id/textMetricSun"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginTop="6dp"
+                                            android:text="—"
+                                            android:textColor="@color/text_on_light"
+                                            android:textSize="15sp"
+                                            android:textStyle="bold" />
+                                    </LinearLayout>
+                                </com.google.android.material.card.MaterialCardView>
+
+                                <com.google.android.material.card.MaterialCardView
+                                    android:layout_width="0dp"
+                                    android:layout_height="128dp"
+                                    android:layout_weight="1"
+                                    app:cardBackgroundColor="@color/glass_surface"
+                                    app:cardCornerRadius="20dp"
+                                    app:cardElevation="4dp"
+                                    app:strokeColor="@color/glass_stroke"
+                                    app:strokeWidth="1dp">
+
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:gravity="center"
+                                        android:orientation="vertical"
+                                        android:padding="10dp">
+
+                                        <TextView
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:gravity="center"
+                                            android:text="@string/slot_metric_6"
+                                            android:textAlignment="center"
+                                            android:textColor="@color/text_on_light"
+                                            android:textSize="12sp" />
+
+                                        <TextView
+                                            android:id="@+id/textMetricPressure"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginTop="6dp"
+                                            android:text="—"
+                                            android:textColor="@color/text_on_light"
+                                            android:textSize="18sp"
+                                            android:textStyle="bold" />
+                                    </LinearLayout>
+                                </com.google.android.material.card.MaterialCardView>
+                            </LinearLayout>
+                        </LinearLayout>
+                    </LinearLayout>
+                </androidx.core.widget.NestedScrollView>
+            </LinearLayout>
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</FrameLayout>

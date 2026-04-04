@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Toolbar hàng đầu + margin: chỉnh nếu đổi layout header -->
+    <dimen name="forecast_hourly_overlay_top">72dp</dimen>
+    <dimen name="hourly_block_placeholder_height">200dp</dimen>
+</resources>

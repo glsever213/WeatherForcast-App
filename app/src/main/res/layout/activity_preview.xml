@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/screen_bg_black"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
+
+    <ImageButton
+        android:id="@+id/buttonBackPreview"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/cancel"
+        android:src="@drawable/ic_back_24" />
+
+    <TextView
+        android:id="@+id/textPreviewCity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="20dp"
+        android:textColor="@color/text_primary_on_dark"
+        android:textSize="28sp"
+        android:textStyle="bold" />
+
+    <!-- Khối "Hôm nay" (giờ) giống FiveDay — BlurTarget + widget_today_hourly_block; FAB + giữ dưới. -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="8dp">
+
+        <eightbitlab.com.blurview.BlurTarget
+            android:id="@+id/blurTargetRoot"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/screen_bg_black" />
+        </eightbitlab.com.blurview.BlurTarget>
+
+        <include
+            android:id="@+id/blockTodayHourlyPreview"
+            layout="@layout/widget_today_hourly_block"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top" />
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabAddToHome"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/add_to_home"
+            app:backgroundTint="#8899AABB"
+            app:srcCompat="@drawable/ic_add_24"
+            app:tint="@color/text_primary_on_dark" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="@string/add_to_home"
+            android:textColor="@color/text_primary_on_dark"
+            android:textSize="15sp" />
+    </LinearLayout>
+</LinearLayout>

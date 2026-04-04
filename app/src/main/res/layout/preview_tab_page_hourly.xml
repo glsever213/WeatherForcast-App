@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/hourlyTabRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="8dp">
+
+    <eightbitlab.com.blurview.BlurTarget
+        android:id="@+id/blurTargetRoot"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/screen_bg_black" />
+    </eightbitlab.com.blurview.BlurTarget>
+
+    <include layout="@layout/widget_today_hourly_block" />
+</FrameLayout>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Home: Hôm nay / Ngày mai / CN — không có icon (theo ảnh 3). -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingVertical="10dp">
+
+    <TextView
+        android:id="@+id/textDayLabel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textColor="@color/text_on_light"
+        android:textSize="15sp"
+        tools:text="Hôm nay" />
+
+    <TextView
+        android:id="@+id/textLow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:textColor="@color/text_on_light"
+        android:textSize="14sp"
+        tools:text="24°" />
+
+    <ProgressBar
+        android:id="@+id/rangePlaceholder"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="0dp"
+        android:layout_height="6dp"
+        android:layout_marginHorizontal="10dp"
+        android:layout_weight="2"
+        android:indeterminate="false"
+        android:max="100"
+        android:progress="50"
+        android:progressTint="@color/chart_line" />
+
+    <TextView
+        android:id="@+id/textHigh"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/text_on_light"
+        android:textSize="14sp"
+        tools:text="29°" />
+</LinearLayout>

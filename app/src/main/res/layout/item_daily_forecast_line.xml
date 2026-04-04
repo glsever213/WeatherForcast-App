@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 3 cột phân đều: ngày | icon + ghi chú | nhiệt độ (ảnh 1 / Next Forecast). -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:baselineAligned="false"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingVertical="14dp">
+
+    <TextView
+        android:id="@+id/textDailyDate"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="start|center_vertical"
+        android:textColor="@color/text_primary_on_dark"
+        android:textSize="15sp"
+        tools:text="13/9" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/iconDaily"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:contentDescription="@null"
+            tools:src="@drawable/ic_weather_placeholder" />
+
+        <TextView
+            android:id="@+id/textIconNote"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:maxLines="3"
+            android:text="@string/slot_openweather_icon_line"
+            android:textColor="@color/text_secondary_on_dark"
+            android:textSize="9sp" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/textDailyTemp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="end|center_vertical"
+        android:textColor="@color/text_primary_on_dark"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        tools:text="34°" />
+</LinearLayout>

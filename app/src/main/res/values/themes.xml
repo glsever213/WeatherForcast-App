@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.WeatherForcastApp" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="colorPrimary">@color/weather_type1_end</item>
+        <item name="colorSurface">@color/screen_bg_black</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="fontFamily">sans-serif</item>
+        <item name="textAppearanceTitleLarge">@style/TextAppearance.Weather.TitleLarge</item>
+        <item name="textAppearanceBodyLarge">@style/TextAppearance.Weather.Body</item>
+        <item name="textAppearanceBodyMedium">@style/TextAppearance.Weather.Body</item>
+    </style>
+
+    <style name="Theme.WeatherForcastApp.Home" parent="Theme.WeatherForcastApp">
+        <item name="android:windowBackground">@android:color/transparent</item>
+    </style>
+
+    <style name="Theme.WeatherForcastApp.Forecast" parent="Theme.WeatherForcastApp">
+        <item name="android:windowBackground">@color/screen_bg_black</item>
+    </style>
+
+    <style name="Theme.WeatherForcastApp.Black" parent="Theme.WeatherForcastApp">
+        <item name="android:windowBackground">@color/screen_bg_black</item>
+    </style>
+
+    <style name="Theme.WeatherForcastApp.DarkScreen" parent="Theme.WeatherForcastApp">
+        <item name="android:windowBackground">@drawable/bg_gradient_blue_vertical</item>
+    </style>
+
+    <style name="AnimActivity" parent="@android:style/Animation.Activity">
+        <item name="android:activityOpenEnterAnimation">@anim/slide_in_right</item>
+        <item name="android:activityOpenExitAnimation">@anim/slide_out_left</item>
+        <item name="android:activityCloseEnterAnimation">@anim/slide_in_left</item>
+        <item name="android:activityCloseExitAnimation">@anim/slide_out_right</item>
+    </style>
+</resources>

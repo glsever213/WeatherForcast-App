@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Loại 1: gradient nắng (mặc định) -->
+    <color name="weather_type1_start">#47BFDF</color>
+    <color name="weather_type1_end">#4A91FF</color>
+    <!-- Loại 2 -->
+    <color name="weather_type2">#444E72</color>
+    <!-- Loại 3 -->
+    <color name="weather_type3">#838BAA</color>
+    <!-- Loại 4 -->
+    <color name="weather_type4">#FFFFFF</color>
+
+    <color name="screen_bg_black">#000000</color>
+    <color name="search_bar_bg">#2C2C2C</color>
+    <color name="text_primary_on_dark">#FFFFFF</color>
+    <color name="text_secondary_on_dark">#B0B0B0</color>
+    <color name="chip_blue">#4A91FF</color>
+    <color name="text_on_light">#1A1A1A</color>
+    <color name="chart_line">#FFEB3B</color>
+    <color name="card_overlay">#66838BAA</color>
+
+    <!-- Glass / Figma-style -->
+    <color name="glass_surface">#CCFFFFFF</color>
+    <color name="glass_surface_soft">#99FFFFFF</color>
+    <color name="glass_stroke">#66FFFFFF</color>
+    <color name="glass_highlight">#40FFFFFF</color>
+    <color name="glass_stroke_on_dark">#55FFFFFF</color>
+</resources>
