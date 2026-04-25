@@ -41,12 +41,12 @@
 
     <string name="slot_hero_note">Vùng ghi chú dưới hero (team xóa khi có dữ liệu thật)</string>
     <string name="slot_chart_note">Vùng mô tả dưới biểu đồ 24h</string>
-    <string name="slot_metric_1">Ô 1 — hiển thị chỉ số tia UV (team đặt tên + đơn vị)</string>
-    <string name="slot_metric_2">Ô 2 — hiển thị độ ẩm không khí</string>
-    <string name="slot_metric_3">Ô 3 — nhiệt độ cảm nhận</string>
-    <string name="slot_metric_4">Ô 4 — hướng / tốc độ gió</string>
-    <string name="slot_metric_5">Ô 5 — mặt trời mọc / lặn</string>
-    <string name="slot_metric_6">Ô 6 — áp suất khí quyển</string>
+    <string name="slot_metric_1">Chỉ số tia UV </string>
+    <string name="slot_metric_2">Độ ẩm không khí</string>
+    <string name="slot_metric_3">Nhiệt độ cảm nhận</string>
+    <string name="slot_metric_4">Hướng / Tốc độ gió</string>
+    <string name="slot_metric_5">Mặt trời mọc / lặn</string>
+    <string name="slot_metric_6">Áp suất khí quyển</string>
 
     <string name="delete_selected">Xóa đã chọn</string>
     <string name="delete_all">Xóa tất cả</string>

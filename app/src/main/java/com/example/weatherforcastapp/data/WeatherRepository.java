@@ -70,7 +70,7 @@ public final class WeatherRepository {
         }
 
         String q = WeatherApiQuery.latLon(lat, lon);
-        pendingForecast = WeatherApiClient.api().getForecast(q, 3, lang);
+        pendingForecast = WeatherApiClient.api().getForecast(q, 3, "yes", lang);
         pendingForecast.enqueue(new Callback<ForecastResponse>() {
             @Override
             public void onResponse(@NonNull Call<ForecastResponse> call, @NonNull Response<ForecastResponse> response) {
