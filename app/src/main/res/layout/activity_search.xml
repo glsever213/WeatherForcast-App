@@ -36,6 +36,15 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/buttonSearch"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="@string/search_action"
+            android:textColor="@color/text_primary_on_dark" />
+
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/buttonCancel"
             style="@style/Widget.Material3.Button.TextButton"
             android:layout_width="wrap_content"
@@ -52,41 +61,40 @@
         android:textColor="@color/text_secondary_on_dark"
         android:textSize="12sp" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:text="@string/fake_suggestions_minimal"
-        android:textColor="@color/text_primary_on_dark"
-        android:textSize="13sp" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/chipFakeHanoi"
-        style="@style/Widget.Material3.Button.OutlinedButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:text="Hà Nội (giả)"
-        android:textColor="@color/text_primary_on_dark"
-        app:strokeColor="@color/glass_stroke_on_dark" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/chipFakeHcmc"
-        style="@style/Widget.Material3.Button.OutlinedButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="TP.HCM (giả)"
-        android:textColor="@color/text_primary_on_dark"
-        app:strokeColor="@color/glass_stroke_on_dark" />
-
     <com.google.android.material.button.MaterialButton
         android:id="@+id/chipLocate"
         style="@style/Widget.Material3.Button.OutlinedButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="12dp"
         android:text="@string/locate_chip"
         android:textColor="@color/text_primary_on_dark"
         app:strokeColor="@color/glass_stroke_on_dark" />
+
+    <TextView
+        android:id="@+id/textSearchState"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:textColor="@color/text_secondary_on_dark"
+        android:textSize="13sp"
+        android:visibility="gone" />
+
+    <ProgressBar
+        android:id="@+id/progressSearch"
+        style="?android:attr/progressBarStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="14dp"
+        android:visibility="gone" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerSearchResults"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="14dp"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:paddingBottom="12dp" />
 </LinearLayout>
