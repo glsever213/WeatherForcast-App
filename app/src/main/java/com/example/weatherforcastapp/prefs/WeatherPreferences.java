@@ -152,4 +152,37 @@ public final class WeatherPreferences {
     public void markApiCalled(String key) {
         prefs.edit().putLong(KEY_PREFIX_API_LAST + key, System.currentTimeMillis()).apply();
     }
+
+
+    /**
+     * Helper cho PreviewActivity kiểm tra xem vị trí đã lưu chưa
+     */
+    public boolean hasSavedLocationWithCoords(double lat, double lon) {
+        List<SavedLocation> currentList = getSavedLocations();
+        String targetId = SavedLocation.buildId(lat, lon); // Giả định hàm buildId trả về chuỗi nối lat_lon
+        for (SavedLocation loc : currentList) {
+            if (loc.getId() != null && loc.getId().equals(targetId)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean addLocation(SavedLocation location) {
+        List<SavedLocation> currentList = getSavedLocations();
+
+        // Kiểm tra trùng lặp
+        if (hasSavedLocationWithCoords(location.getLatitude(), location.getLongitude())) {
+            return false;
+        }
+
+        // Kiểm tra giới hạn 20
+        if (currentList.size() >= MAX_SAVED_LOCATIONS) {
+            return false;
+        }
+
+        currentList.add(location);
+        saveLocations(currentList);
+        return true;
+    }
 }
