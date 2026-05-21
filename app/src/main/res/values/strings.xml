@@ -58,4 +58,5 @@
 
     <string name="forecast_row_tomorrow">Ngày mai</string>
     <string name="weather_load_failed">Không tải được dữ liệu thời tiết. Kiểm tra mạng hoặc API key.</string>
+    <string name="gps_failed_go_search">Không lấy được vị trí GPS. Hãy tìm thủ công.</string>
 </resources>
