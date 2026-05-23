@@ -65,8 +65,6 @@ public class PreviewActivity extends AppCompatActivity {
         binding.layoutPreviewHero.setVisibility(View.INVISIBLE);
 
         WidgetTodayHourlyBlockBinding hourly = binding.blockTodayHourlyPreview;
-//        TodayHourlySectionHelper.bindHeader(hourly, getString(R.string.forecast_today_date_placeholder));
-//        TodayHourlySectionHelper.bindRecycler(hourly.recyclerTodayHourly);
         TodayHourlySectionHelper.setupBlur(this, hourly.blurTodayHourly);
 
         applyFabSavedState();
@@ -75,30 +73,6 @@ public class PreviewActivity extends AppCompatActivity {
             finish();
             ActivityTransitions.slideOut(this);
         });
-
-//        binding.fabAddToHome.setOnClickListener(v -> {
-//            WeatherPreferences prefs = WeatherPreferences.get(this);
-//            String name = cityName != null ? cityName : "—";
-//            SavedLocation loc = new SavedLocation(name, lat, lon, getString(R.string.frame_note));
-//
-//            if (flowMode == LocationContract.FLOW_ONBOARDING) {
-//                prefs.setCurrentLocation(lat, lon, name);
-//                if (!prefs.addOrUpdateLocation(loc)) {
-//                    Toast.makeText(this, R.string.max_locations_reached, Toast.LENGTH_SHORT).show();
-//                }
-//                HomeActivity.startClearTask(this, lat, lon, name);
-//                finishAffinity();
-//                return;
-//            }
-//
-//            if (!prefs.addOrUpdateLocation(loc)) {
-//                Toast.makeText(this, R.string.max_locations_reached, Toast.LENGTH_SHORT).show();
-//                return;
-//            }
-//            Toast.makeText(this, R.string.location_added, Toast.LENGTH_SHORT).show();
-//            finish();
-//            ActivityTransitions.slideOut(this);
-//        });
         binding.fabAddToHome.setOnClickListener(v -> onFabClicked());
 
         loadWeatherData();

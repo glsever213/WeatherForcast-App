@@ -98,9 +98,10 @@ public class SearchActivity extends AppCompatActivity {
         int flow = mode == MODE_ONBOARDING
                 ? LocationContract.FLOW_ONBOARDING
                 : LocationContract.FLOW_MANAGEMENT;
-        PreviewActivity.start(this, city.name, city.lat, city.lon, flow);
-        ActivityTransitions.slideIn(this);
-        finish();
+//        PreviewActivity.start(this, city.name, city.lat, city.lon, flow);
+//        ActivityTransitions.slideIn(this);
+//        finish();
+        PreviewBottomSheet.show(getSupportFragmentManager(), city.name, city.lat, city.lon, flow);
     }
 
     private void onCancel() {
@@ -114,6 +115,7 @@ public class SearchActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        super.onBackPressed();
         onCancel();
     }
 }
