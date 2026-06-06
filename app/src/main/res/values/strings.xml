@@ -58,6 +58,8 @@
     <string name="done">Xong</string>
     <string name="max_locations_reached">Đã đạt tối đa 20 địa điểm</string>
     <string name="location_added">Đã thêm địa điểm</string>
+    <string name="location_already_saved">Đã lưu</string>
+    <string name="preview_view_detail">Xem chi tiết</string>
     <string name="search_empty">Nhập tên địa điểm rồi bấm Enter</string>
     <string name="search_not_found">Không có kết quả giả cho chuỗi này (team nối API)</string>
 
