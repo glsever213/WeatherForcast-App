@@ -15,13 +15,9 @@ public final class ApiForecastDayDto {
     @SerializedName("astro")
     private AstroDto astro;
 
-    public AstroDto getAstro() { return astro; }
-
-
     @SerializedName("hour")
-    private List<Hour> hour;
+    private List<HourItemDto> hour;
 
-    public List<Hour> getHour() { return hour; }
     public String getDate() {
         return date;
     }
@@ -30,30 +26,11 @@ public final class ApiForecastDayDto {
         return day;
     }
 
-    public static class AstroDto {
-
-        @SerializedName("sunrise")
-        private String sunrise;
-
-        @SerializedName("sunset")
-        private String sunset;
-
-        public String getSunrise() { return sunrise; }
-        public String getSunset() { return sunset; }
+    public AstroDto getAstro() {
+        return astro;
     }
 
-    public static class Hour {
-        @SerializedName("temp_c")
-        private Double tempC;
-        @SerializedName("time")
-        private String time;
-        @SerializedName("condition")
-        private ConditionDto condition;
-        public Double getTempC() {
-            return tempC;
-        }
-        public String getTime() { return time; }
-        public ConditionDto getCondition() { return condition; }
+    public List<HourItemDto> getHour() {
+        return hour;
     }
 }
-

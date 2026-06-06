@@ -25,6 +25,8 @@ import androidx.annotation.NonNull;
 import com.example.weatherforcastapp.model.api.ApiForecastDayDto;
 import com.example.weatherforcastapp.model.api.DayAggregateDto;
 import com.example.weatherforcastapp.model.api.ForecastResponse;
+import com.example.weatherforcastapp.model.api.HourItemDto;
+
 import java.util.List;
 import java.util.Locale;
 
@@ -108,7 +110,7 @@ public class FiveDayForecastActivity extends AppCompatActivity {
 
         if (today.getHour() != null) {//hien thi thoi gian thuc va nhiet do theo thoi gian thuc
             for (int i = 0; i < today.getHour().size(); i++) {
-                ApiForecastDayDto.Hour h = today.getHour().get(i);
+                HourItemDto h = today.getHour().get(i);
                 String temp = String.format(Locale.getDefault(), "%.0f°", h.getTempC());
                 String time = h.getTime().substring(11, 16);
                 String icon = "";
