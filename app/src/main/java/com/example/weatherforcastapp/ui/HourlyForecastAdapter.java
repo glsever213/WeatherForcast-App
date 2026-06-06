@@ -56,9 +56,9 @@ public final class HourlyForecastAdapter extends RecyclerView.Adapter<HourlyFore
             if (colon > 0) hour = Integer.parseInt(s.timeLabel.substring(0, colon));
         } catch (Exception ignored) {
         }
-        String url = WeatherApiIcons.url(s.iconCode, hour >= 6 && hour < 18, WeatherApiIcons.SIZE_LIST);
+
         Glide.with(holder.binding.iconHourly.getContext())
-                .load(url)
+                .load("https:" + s.iconCode)
                 .placeholder(R.drawable.ic_weather_placeholder)
                 .into(holder.binding.iconHourly);
 

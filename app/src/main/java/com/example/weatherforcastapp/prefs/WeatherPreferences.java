@@ -36,7 +36,7 @@ public final class WeatherPreferences {
 
     private final SharedPreferences prefs;
 
-    private WeatherPreferences(Context appContext) {
+    public WeatherPreferences(Context appContext) {
         this.prefs = appContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
     }
 

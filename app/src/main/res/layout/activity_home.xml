@@ -122,6 +122,8 @@
                                 android:layout_height="140dp"
                                 android:contentDescription="@string/forecast_24h"
                                 android:scaleType="fitCenter"
+                                tools:layout_editor_absoluteX="99dp"
+                                tools:layout_editor_absoluteY="12dp"
                                 tools:src="@android:drawable/ic_menu_day" />
 
                             <TextView
@@ -163,14 +165,7 @@
                                     android:textSize="14sp" />
                             </com.google.android.material.card.MaterialCardView>
 
-                            <TextView
-                                android:id="@+id/textFrameNoteHome"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:alpha="0.88"
-                                android:text="@string/slot_hero_note"
-                                android:textColor="@color/text_primary_on_dark"
-                                android:textSize="11sp" />
+
                         </androidx.constraintlayout.motion.widget.MotionLayout>
 
                         <com.google.android.material.card.MaterialCardView
@@ -179,7 +174,7 @@
                             android:layout_marginTop="20dp"
                             app:cardBackgroundColor="@color/glass_surface"
                             app:cardCornerRadius="24dp"
-                            app:cardElevation="6dp"
+                            app:cardElevation="0dp"
                             app:strokeColor="@color/glass_stroke"
                             app:strokeWidth="1dp">
 
@@ -204,12 +199,12 @@
                                         android:textSize="17sp"
                                         android:textStyle="bold" />
 
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:text="@string/more_detail"
-                                        android:textColor="@color/text_on_light"
-                                        android:textSize="14sp" />
+<!--                                    <TextView-->
+<!--                                        android:layout_width="wrap_content"-->
+<!--                                        android:layout_height="wrap_content"-->
+<!--                                        android:text="@string/more_detail"-->
+<!--                                        android:textColor="@color/text_on_light"-->
+<!--                                        android:textSize="14sp" />-->
                                 </LinearLayout>
 
                                 <androidx.recyclerview.widget.RecyclerView
@@ -294,7 +289,7 @@
                                     android:layout_weight="1"
                                     app:cardBackgroundColor="@color/glass_surface"
                                     app:cardCornerRadius="20dp"
-                                    app:cardElevation="4dp"
+                                    app:cardElevation="0dp"
                                     app:strokeColor="@color/glass_stroke"
                                     app:strokeWidth="1dp">
 
@@ -312,7 +307,7 @@
                                             android:text="@string/slot_metric_1"
                                             android:textAlignment="center"
                                             android:textColor="@color/text_on_light"
-                                            android:textSize="12sp" />
+                                            android:textSize="15sp" />
 
                                         <TextView
                                             android:id="@+id/textMetricUv"
@@ -332,7 +327,7 @@
                                     android:layout_weight="1"
                                     app:cardBackgroundColor="@color/glass_surface"
                                     app:cardCornerRadius="20dp"
-                                    app:cardElevation="4dp"
+                                    app:cardElevation="0dp"
                                     app:strokeColor="@color/glass_stroke"
                                     app:strokeWidth="1dp">
 
@@ -350,7 +345,7 @@
                                             android:text="@string/slot_metric_2"
                                             android:textAlignment="center"
                                             android:textColor="@color/text_on_light"
-                                            android:textSize="12sp" />
+                                            android:textSize="15sp" />
 
                                         <TextView
                                             android:id="@+id/textMetricHumidity"
@@ -378,7 +373,7 @@
                                     android:layout_weight="1"
                                     app:cardBackgroundColor="@color/glass_surface"
                                     app:cardCornerRadius="20dp"
-                                    app:cardElevation="4dp"
+                                    app:cardElevation="0dp"
                                     app:strokeColor="@color/glass_stroke"
                                     app:strokeWidth="1dp">
 
@@ -396,7 +391,7 @@
                                             android:text="@string/slot_metric_3"
                                             android:textAlignment="center"
                                             android:textColor="@color/text_on_light"
-                                            android:textSize="12sp" />
+                                            android:textSize="15sp" />
 
                                         <TextView
                                             android:id="@+id/textMetricFeels"
@@ -416,7 +411,7 @@
                                     android:layout_weight="1"
                                     app:cardBackgroundColor="@color/glass_surface"
                                     app:cardCornerRadius="20dp"
-                                    app:cardElevation="4dp"
+                                    app:cardElevation="0dp"
                                     app:strokeColor="@color/glass_stroke"
                                     app:strokeWidth="1dp">
 
@@ -434,7 +429,7 @@
                                             android:text="@string/slot_metric_4"
                                             android:textAlignment="center"
                                             android:textColor="@color/text_on_light"
-                                            android:textSize="12sp" />
+                                            android:textSize="15sp" />
 
                                         <TextView
                                             android:id="@+id/textMetricWind"
@@ -443,7 +438,7 @@
                                             android:layout_marginTop="6dp"
                                             android:text="—"
                                             android:textColor="@color/text_on_light"
-                                            android:textSize="15sp"
+                                            android:textSize="18sp"
                                             android:textStyle="bold" />
                                     </LinearLayout>
                                 </com.google.android.material.card.MaterialCardView>
@@ -462,7 +457,7 @@
                                     android:layout_weight="1"
                                     app:cardBackgroundColor="@color/glass_surface"
                                     app:cardCornerRadius="20dp"
-                                    app:cardElevation="4dp"
+                                    app:cardElevation="0dp"
                                     app:strokeColor="@color/glass_stroke"
                                     app:strokeWidth="1dp">
 
@@ -480,7 +475,7 @@
                                             android:text="@string/slot_metric_5"
                                             android:textAlignment="center"
                                             android:textColor="@color/text_on_light"
-                                            android:textSize="12sp" />
+                                            android:textSize="15sp" />
 
                                         <TextView
                                             android:id="@+id/textMetricSun"
@@ -490,7 +485,7 @@
                                             android:text="—"
                                             android:gravity="center"
                                             android:textColor="@color/text_on_light"
-                                            android:textSize="15sp"
+                                            android:textSize="18sp"
                                             android:textStyle="bold" />
                                     </LinearLayout>
                                 </com.google.android.material.card.MaterialCardView>
@@ -501,7 +496,7 @@
                                     android:layout_weight="1"
                                     app:cardBackgroundColor="@color/glass_surface"
                                     app:cardCornerRadius="20dp"
-                                    app:cardElevation="4dp"
+                                    app:cardElevation="0dp"
                                     app:strokeColor="@color/glass_stroke"
                                     app:strokeWidth="1dp">
 
@@ -519,7 +514,7 @@
                                             android:text="@string/slot_metric_6"
                                             android:textAlignment="center"
                                             android:textColor="@color/text_on_light"
-                                            android:textSize="12sp" />
+                                            android:textSize="15sp" />
 
                                         <TextView
                                             android:id="@+id/textMetricPressure"

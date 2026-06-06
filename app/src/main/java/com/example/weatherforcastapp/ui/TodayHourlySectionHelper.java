@@ -40,6 +40,26 @@ public final class TodayHourlySectionHelper {
         recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext(), LinearLayoutManager.HORIZONTAL, false));
         recyclerView.setAdapter(new HourlyForecastAdapter(hourly, 2));
     }
+//ham hien thi thoi gian thuc va nhiet do theo thoi gian thuc
+    public static void bindRecycler(@NonNull RecyclerView recyclerView, @NonNull List<HourlyForecastAdapter.Slot> hourly) {
+        recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext(), LinearLayoutManager.HORIZONTAL, false));
+
+        int currentHour = java.util.Calendar.getInstance().get(java.util.Calendar.HOUR_OF_DAY);
+        int selectedIndex = 0;
+        for (int i = 0; i < hourly.size(); i++) {
+            try {
+                String time = hourly.get(i).timeLabel;
+                int hour = Integer.parseInt(time.substring(0, time.indexOf(':')));
+                if (hour == currentHour) {
+                    selectedIndex = i;
+                    break;
+                }
+            } catch (Exception ignored) {
+            }
+        }
+        recyclerView.setAdapter(new HourlyForecastAdapter(hourly, selectedIndex));
+        recyclerView.scrollToPosition(selectedIndex);
+    }
 
     /**
      * Glassmorphism: BlurView 3.x cần {@link BlurTarget} trong layout (xem {@code activity_five_day_forecast},

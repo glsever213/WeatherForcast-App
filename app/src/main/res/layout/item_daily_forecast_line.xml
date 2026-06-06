@@ -1,57 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- 3 cột phân đều: ngày | icon + ghi chú | nhiệt độ (ảnh 1 / Next Forecast). -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- 3 cột phân đều: ngày | icon + ghi chú | nhiệt độ (ảnh 1 / Next Forecast).-->
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:baselineAligned="false"
-    android:gravity="center_vertical"
-    android:orientation="horizontal"
-    android:paddingVertical="14dp">
-
-    <TextView
-        android:id="@+id/textDailyDate"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:gravity="start|center_vertical"
-        android:textColor="@color/text_primary_on_dark"
-        android:textSize="15sp"
-        tools:text="13/9" />
+    android:layout_width="350dp"
+    android:layout_height="210dp"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="20dp"
+    app:cardElevation="4dp"
+    app:strokeWidth="1dp">
 
     <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:orientation="vertical">
-
-        <ImageView
-            android:id="@+id/iconDaily"
-            android:layout_width="44dp"
-            android:layout_height="44dp"
-            android:contentDescription="@null"
-            tools:src="@drawable/ic_weather_placeholder" />
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="12dp">
 
         <TextView
-            android:id="@+id/textIconNote"
+            android:id="@+id/textDailyDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_primary_on_dark"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            tools:text="2026 - 03 - 28" />
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:maxLines="3"
-            android:text="@string/slot_openweather_icon_line"
-            android:textColor="@color/text_secondary_on_dark"
-            android:textSize="9sp" />
+            android:orientation="horizontal"
+            android:layout_marginTop="12dp">
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+            <ImageView
+                android:id="@+id/iconDaily"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="20dp"
+                android:contentDescription="@null"
+                tools:src="@drawable/ic_weather_placeholder" />
+                <TextView
+                    android:id="@+id/textIconNote"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:maxLines="2"
+                    android:layout_marginStart="20dp"
+                    android:textColor="@color/text_secondary_on_dark"
+                    android:textSize="15sp"
+                    tools:text="Mưa vừa" />
+                <TextView
+                    android:id="@+id/textRainChance"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginStart="20dp"
+                    android:textColor="@color/text_secondary_on_dark"
+                    android:textSize="15sp"
+                    tools:text="💧 80%" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/textDailyTemp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="24sp"
+                    android:layout_marginTop="40dp"
+                    android:layout_marginEnd="20dp"
+                    android:textColor="@color/text_primary_on_dark"
+                    android:textStyle="bold"
+                    tools:text="25° / 30°" />
+
+                <TextView
+                    android:id="@+id/textFeelsLike"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="20dp"
+                    android:textColor="@color/text_primary_on_dark"
+                    android:textSize="15sp"
+                    tools:text="Feels 28°" />
+            </LinearLayout>
+        </LinearLayout>
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/textDailyTemp"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:gravity="end|center_vertical"
-        android:textColor="@color/text_primary_on_dark"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        tools:text="34°" />
-</LinearLayout>
+</com.google.android.material.card.MaterialCardView>
