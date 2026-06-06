@@ -43,13 +43,17 @@ public final class ApiForecastDayDto {
     }
 
     public static class Hour {
-
         @SerializedName("temp_c")
         private Double tempC;
-
+        @SerializedName("time")
+        private String time;
+        @SerializedName("condition")
+        private ConditionDto condition;
         public Double getTempC() {
             return tempC;
         }
+        public String getTime() { return time; }
+        public ConditionDto getCondition() { return condition; }
     }
 }
 

@@ -79,7 +79,8 @@ public class HomeActivity extends AppCompatActivity {
         binding = ActivityHomeBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        prefs = WeatherPreferences.get(this);
+        prefs = new WeatherPreferences(this);
+
         forecastDayAdapter = new ForecastDayAdapter();
         binding.recyclerForecast5d.setLayoutManager(new LinearLayoutManager(this));
         binding.recyclerForecast5d.setAdapter(forecastDayAdapter);
@@ -108,9 +109,6 @@ public class HomeActivity extends AppCompatActivity {
 
         binding.swipeRefresh.setOnRefreshListener(this::onSwipeRefresh);
 
-//        if (!prefs.hasCurrentLocation()) {
-//            prefs.setCurrentLocation(21.03, 105.85, "Hà Nội");
-//        }
     }
 
     @Override
@@ -189,16 +187,16 @@ public class HomeActivity extends AppCompatActivity {
             double la = LocationContract.readLat(intent, 0);
             double lo = LocationContract.readLon(intent, 0);
             prefs.setCurrentLocation(la, lo, LocationContract.readDisplayName(intent));
-            prefs.setCurrentLocation(21.0278, 105.8342, "Hà Nội");
+
         }
 
         double lat = prefs.getCurrentLat();
         double lon = prefs.getCurrentLon();
         String name = prefs.getCurrentName();
 
-        binding.textLocationName.setText(name != null && !name.isEmpty() ? name : getString(R.string.placeholder_location));
-        binding.textCurrentTemp.setText(R.string.placeholder_temp);
-        binding.textConditionLine.setText(R.string.placeholder_condition);
+//        binding.textLocationName.setText(name != null && !name.isEmpty() ? name : getString(R.string.placeholder_location));
+//        binding.textCurrentTemp.setText(R.string.placeholder_temp);
+//        binding.textConditionLine.setText(R.string.placeholder_condition);
 
         binding.scrollHome.post(() -> applyHeroVisibility(binding.scrollHome.getScrollY()));
 
@@ -207,7 +205,7 @@ public class HomeActivity extends AppCompatActivity {
         if (isInvalidCoords(lat, lon)) {
             return;
         }
-
+//ham load du lieu tu api
         weatherRepo.fetchForecastForHome(lat, lon, prefs, false, "vi", new WeatherRepository.HomeForecastListener() {
             @Override
             public void onSuccess(@NonNull ForecastResponse body) {
@@ -235,56 +233,46 @@ public class HomeActivity extends AppCompatActivity {
         }
         if (r.getLocation() != null && r.getLocation().getName() != null) {
             String realName = r.getLocation().getName();
-            binding.textLocationName.setText(realName);
+            binding.textLocationName.setText(realName);//lay ten cua thanh pho
             prefs.setCurrentLocation(
                     prefs.getCurrentLat(),
                     prefs.getCurrentLon(),
                     realName
             );
         }//Lấy location name từ Weather API
-        //binding.textCurrentTemp.setText(String.format(Locale.getDefault(), "%.0f°", cur.getTempC()));
-        binding.textConditionLine.setText(cur.getCondition().getText());
 
-// tia UV
-        if (cur.getUv() != null) {
-            binding.textMetricUv.setText(String.valueOf(cur.getUv()));
-        }
-
-// Humidity
-        if (cur.getHumidity() != null) {
-            binding.textMetricHumidity.setText(cur.getHumidity() + "%");
-        }
-//Nhiet do cam nhan
-        if (cur.getFeelslikeC() != null) {
-            binding.textMetricFeels.setText(
-                    String.format(Locale.getDefault(), "%.0f°", cur.getFeelslikeC())
-            );
-        }
-
-// Huong gio
-        if (cur.getWindKph() != null && cur.getWindKph() != null) {
-            binding.textMetricWind.setText(cur.getWindKph() + " km/h");
-        }
-
-// Ap suat
-        if (cur.getPressureMb() != null) {
-            binding.textMetricPressure.setText(cur.getPressureMb() + " mb");
-        }
-//AQI
-        if (cur.getAirQuality() != null) {
-
+        if (cur.getAirQuality() != null) {//AQI
             int aqi = cur.getAirQuality().getUsEpaIndex();
             binding.textAqi.setText("AQI " + aqi);
         }
 
-        if (cur.getTempC() != null) {
+        binding.textConditionLine.setText(cur.getCondition().getText());
+
+        if (cur.getTempC() != null) {//hien thi nhiet do hien tai
             binding.textCurrentTemp.setText(String.format(Locale.getDefault(), "%.0f°", cur.getTempC()));
         }
-        ConditionDto cond = cur.getCondition();
+        ConditionDto cond = cur.getCondition();//hien thi trang thai thoi tiet
         if (cond != null && cond.getText() != null) {
             binding.textConditionLine.setText(cond.getText());
         }
-        if (cond != null) {
+
+        if (cur.getUv() != null) {//hien thi tia UV
+            binding.textMetricUv.setText(String.valueOf(cur.getUv()));
+        }
+        if (cur.getHumidity() != null) {//hien thi Humidity
+            binding.textMetricHumidity.setText(cur.getHumidity() + "%");
+        }
+        if (cur.getFeelslikeC() != null) {//hien thi nhiet do cam nhan
+            binding.textMetricFeels.setText(String.format(Locale.getDefault(), "%.0f°", cur.getFeelslikeC()));
+        }
+        if (cur.getWindKph() != null && cur.getWindKph() != null) {//hien thi huong gio
+            binding.textMetricWind.setText(cur.getWindKph() + " km/h");
+        }
+        if (cur.getPressureMb() != null) {//hien thi ap suat
+            binding.textMetricPressure.setText(cur.getPressureMb() + " mb");
+        }
+
+        if (cond != null) {//hien thi icon to du bao thoi tiet
             String u = WeatherApiIcons.url(cond.getIcon(), cur.isDaytime(), WeatherApiIcons.SIZE_HERO);
             if (u != null && !u.isEmpty()) {
                 Glide.with(this)
@@ -295,20 +283,17 @@ public class HomeActivity extends AppCompatActivity {
             }
         }
 
-        ForecastBucketDto fb = r.getForecast();
+        ForecastBucketDto fb = r.getForecast();//hien thi mat troi moc va lan
         if (fb != null && fb.getForecastday() != null && !fb.getForecastday().isEmpty()) {
-
             ApiForecastDayDto today = fb.getForecastday().get(0);
-
             if (today.getAstro() != null) {
                 String sunrise = today.getAstro().getSunrise();
                 String sunset = today.getAstro().getSunset();
-
-                binding.textMetricSun.setText("↑ " + sunrise + " / ↓ " + sunset);
+                binding.textMetricSun.setText("↑ " + sunrise + "\n" + "↓ " + sunset);
             }
-
         }
-        List<ApiForecastDayDto> days = fb.getForecastday();
+
+        List<ApiForecastDayDto> days = fb.getForecastday();//du bao thoi tiet 3 ngay
         List<ForecastDayAdapter.Row> rows = new ArrayList<>();
         int n = Math.min(3, days.size());
         for (int i = 0; i < n; i++) {
@@ -333,20 +318,15 @@ public class HomeActivity extends AppCompatActivity {
         }
         forecastDayAdapter.setRows(rows);
 
-        ApiForecastDayDto today = r.getForecast().getForecastday().get(0);
-
+        ApiForecastDayDto today = r.getForecast().getForecastday().get(0);//bieu do nhiet do trong 24h
         if (today.getHour() != null && !today.getHour().isEmpty()) {
-
             List<Entry> entries = new ArrayList<>();
-
             for (int i = 0; i < today.getHour().size(); i+=3) {
                 ApiForecastDayDto.Hour h = today.getHour().get(i);
-
                 if (h.getTempC() != null) {
                     entries.add(new Entry(i, h.getTempC().floatValue()));
                 }
             }
-
             updateHourlyChart(entries);
         }
     }
@@ -370,13 +350,12 @@ public class HomeActivity extends AppCompatActivity {
         binding.chartHourlyTemp.invalidate();
     }
 
+    //hien thu trong tuan o du bao 3 ngay
     private String formatForecastRowLabel(int indexInList, @Nullable String yyyyMmDd) {
         if (indexInList == 0) {
             return getString(R.string.forecast_today_section);
         }
-//        if (indexInList == 1) {
-//            return getString(R.string.forecast_row_tomorrow);
-//        }
+
         if (yyyyMmDd == null || yyyyMmDd.isEmpty()) {
             return "—";
         }

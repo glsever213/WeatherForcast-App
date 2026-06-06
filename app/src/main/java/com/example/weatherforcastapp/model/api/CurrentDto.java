@@ -51,7 +51,6 @@ public final class CurrentDto {
     }
 
     public class AirQualityDto {
-
         @SerializedName("us-epa-index")
         private int usEpaIndex;
 

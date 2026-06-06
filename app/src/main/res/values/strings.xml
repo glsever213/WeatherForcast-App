@@ -25,8 +25,8 @@
     <string name="forecast_5d_screen_title">Dự báo tiếp theo</string>
     <string name="forecast_today_section">Hôm nay</string>
     <string name="forecast_today_date_placeholder">28/3, 2026</string>
-    <string name="forecast_next_section">Dự báo 5 ngày</string>
-    <string name="forecast_5d_detail_cta">Xem chi tiết dự báo 5 ngày</string>
+    <string name="forecast_next_section">Dự báo 3 ngày</string>
+    <string name="forecast_5d_detail_cta">Xem chi tiết dự báo 3 ngày</string>
     <string name="more_detail">Thêm chi tiết</string>
     <string name="forecast_24h">Dự báo 24 giờ</string>
     <string name="add_to_home">Thêm vào trang home</string>

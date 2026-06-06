@@ -78,6 +78,7 @@ public final class WeatherRepository {
                     return;
                 }
                 ForecastResponse body = response.body();
+
                 if (response.isSuccessful() && body != null && body.getCurrent() != null) {
                     prefs.markApiCalled(key);
                     prefs.putApiResponseCache(key, gson.toJson(body));

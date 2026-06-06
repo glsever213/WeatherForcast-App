@@ -37,10 +37,16 @@
         tools:text="24°" />
 
     <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=" / "
+        android:textColor="@color/text_on_light"
+        android:textSize="14sp" />
+
+    <TextView
         android:id="@+id/textHigh"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
         android:textColor="@color/text_on_light"
         android:textSize="14sp"
         tools:text="29°" />
