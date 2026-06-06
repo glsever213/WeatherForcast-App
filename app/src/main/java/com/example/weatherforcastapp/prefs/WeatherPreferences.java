@@ -50,18 +50,38 @@ public final class WeatherPreferences {
 
     public void setCurrentLocation(double lat, double lon, String displayName) {
         prefs.edit()
+//                original
                 .putFloat(KEY_CURRENT_LAT, (float) lat)
                 .putFloat(KEY_CURRENT_LON, (float) lon)
+//                  chatgpt
+//                .putString(KEY_CURRENT_LAT, String.valueOf(lat))
+//                .putString(KEY_CURRENT_LON, String.valueOf(lon))
                 .putString(KEY_CURRENT_NAME, displayName != null ? displayName : "")
                 .apply();
     }
 
     public double getCurrentLat() {
-        return prefs.getFloat(KEY_CURRENT_LAT, 0f);
+        try {
+//            chatgpt
+//            return Double.parseDouble(prefs.getString(KEY_CURRENT_LAT, "0"));
+            //original
+            return prefs.getFloat(KEY_CURRENT_LAT, 0f);
+
+        } catch (Exception e) {
+            return 0d;
+        }
     }
 
     public double getCurrentLon() {
-        return prefs.getFloat(KEY_CURRENT_LON, 0f);
+
+        try {
+//            chatgpt
+//            return Double.parseDouble(prefs.getString(KEY_CURRENT_LON, "0"));
+            //original
+            return prefs.getFloat(KEY_CURRENT_LON, 0f);
+        } catch (Exception e) {
+            return 0d;
+        }
     }
 
     public String getCurrentName() {
