@@ -69,8 +69,10 @@ public final class SavedLocationsAdapter extends RecyclerView.Adapter<SavedLocat
         SavedLocation loc = items.get(position);
         holder.binding.textCityName.setText(loc.getDisplayName());
         holder.binding.textCondition.setText(loc.getCachedSummaryLine().isEmpty() ? "—" : loc.getCachedSummaryLine());
-        holder.binding.textHighLow.setText("— / —");
-        holder.binding.textTempBig.setText("—°");
+        holder.binding.textHighLow.setText(loc.getCachedHighLow());
+        holder.binding.textTempBig.setText(loc.getCachedTemp());
+
+        // holder.binding.iconWeather.setImageResource(loc.getWeatherIconResId());
 
         holder.binding.checkSelect.setVisibility(selectionMode ? View.VISIBLE : View.GONE);
         holder.binding.checkSelect.setChecked(selectedIds.contains(loc.getId()));

@@ -14,6 +14,8 @@ public final class SavedLocation implements Serializable {
     private final double latitude;
     private final double longitude;
     private final String cachedSummaryLine;
+    private String cachedTemp;        // Ví dụ: "26°"
+    private String cachedHighLow;     // Ví dụ: "29° / 24°"
 
     public SavedLocation(String displayName, double latitude, double longitude, String cachedSummaryLine) {
         this.id = buildId(latitude, longitude);
@@ -47,6 +49,22 @@ public final class SavedLocation implements Serializable {
         return cachedSummaryLine;
     }
 
+
+    public String getCachedTemp() {
+        return cachedTemp != null ? cachedTemp : "—°";
+    }
+
+    public void setCachedTemp(String cachedTemp) {
+        this.cachedTemp = cachedTemp;
+    }
+
+    public String getCachedHighLow() {
+        return cachedHighLow != null ? cachedHighLow : "— / —";
+    }
+
+    public void setCachedHighLow(String cachedHighLow) {
+        this.cachedHighLow = cachedHighLow;
+    }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
