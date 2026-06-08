@@ -19,16 +19,8 @@ import com.example.weatherforcastapp.util.ActivityTransitions;
 import com.example.weatherforcastapp.util.LocationHelper;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
-//claude
 import android.location.Address;
 import android.location.Geocoder;
-
-import com.example.weatherforcastapp.databinding.ActivityMainBinding;
-import com.example.weatherforcastapp.prefs.WeatherPreferences;
-import com.example.weatherforcastapp.util.ActivityTransitions;
-import com.example.weatherforcastapp.util.LocationHelper;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
@@ -43,10 +35,6 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQ_LOCATION = 1001;
 
     private ActivityMainBinding binding;
-
-//    chatgpt
-//    private boolean navigationHandled = false;
-//    claude
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     @Override
@@ -57,23 +45,14 @@ public class MainActivity extends AppCompatActivity {
 
         WeatherPreferences prefs = WeatherPreferences.get(this);
         if (prefs.hasCurrentLocation()) {
-//            orginal
             HomeActivity.startClearTask(this, prefs.getCurrentLat(), prefs.getCurrentLon(), prefs.getCurrentName());
             finish();
             return;
-//            chatgpt
-//            navigateHome(
-//                    prefs.getCurrentLat(),
-//                    prefs.getCurrentLon(),
-//                    prefs.getCurrentName()
-//            );
-//            return;
         }
 
         showLocationOfferDialog();
     }
 
-//    claude
     @Override
     protected void onDestroy() {
         executor.shutdownNow();
@@ -108,21 +87,6 @@ public class MainActivity extends AppCompatActivity {
         finish();
     }
 
-//    chatgpt
-//    private void navigateHome(double lat, double lon, String name) {
-//        if (navigationHandled) {
-//            return;
-//        }
-//
-//        navigationHandled = true;
-//
-//        WeatherPreferences prefs = WeatherPreferences.get(this);
-//        prefs.setCurrentLocation(lat, lon, name);
-//
-//        HomeActivity.startClearTask(this, lat, lon, name);
-//        finish();
-//    }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -143,7 +107,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-//    claude
     private void fetchLocationAndGoHome() {
         binding.progressMain.setVisibility(android.view.View.VISIBLE);
         LocationHelper.fetchCurrent(this, new LocationHelper.Callback() {
@@ -164,7 +127,6 @@ public class MainActivity extends AppCompatActivity {
     private void fetchCityNameThenGoHome(double lat, double lon) {
         executor.execute(() -> {
             String cityName = resolveCityName(lat, lon);
-            // Chuyển về main thread để thao tác UI và start Activity
             runOnUiThread(() -> {
                 if (isFinishing()) return;
                 binding.progressMain.setVisibility(android.view.View.GONE);
@@ -178,7 +140,6 @@ public class MainActivity extends AppCompatActivity {
             return getString(R.string.placeholder_location);
         }
         try {
-            // Locale("vi", "VN") → Geocoder trả tên tiếng Việt có dấu
             Geocoder geocoder = new Geocoder(this, new Locale("vi", "VN"));
             List<Address> addresses = geocoder.getFromLocation(lat, lon, 1);
             if (addresses == null || addresses.isEmpty()) {
@@ -194,9 +155,7 @@ public class MainActivity extends AppCompatActivity {
             if (address.getAdminArea() != null && !address.getAdminArea().isEmpty()) {
                 return address.getAdminArea();
             }
-        } catch (IOException e) {
-            // Geocoder thất bại (mạng, service không khả dụng) → dùng placeholder
-        }
+        } catch (IOException e) {}
         return getString(R.string.placeholder_location);
     }
 
@@ -206,27 +165,4 @@ public class MainActivity extends AppCompatActivity {
         HomeActivity.startClearTask(this, lat, lon, cityName);
         finish();
     }
-//  chatgpt
-//    private void fetchLocationAndGoHome() {
-//        binding.progressMain.setVisibility(android.view.View.VISIBLE);
-//        LocationHelper.fetchCurrent(this, new LocationHelper.Callback() {
-//            @Override
-//            public void onLocation(double lat, double lon) {
-//                binding.progressMain.setVisibility(android.view.View.GONE);
-//                String locationName = lat + ", " + lon;
-//                navigateHome(lat, lon, locationName);
-//            }
-//
-//            @Override
-//            public void onError() {
-//                binding.progressMain.setVisibility(android.view.View.GONE);
-//                Toast.makeText(
-//                        MainActivity.this,
-//                        R.string.location_permission_message,
-//                        Toast.LENGTH_SHORT
-//                ).show();
-//                goSearchOnboarding();
-//            }
-//        });
-//    }
 }

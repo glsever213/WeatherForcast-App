@@ -28,6 +28,7 @@ import com.example.weatherforcastapp.prefs.WeatherPreferences;
 import com.example.weatherforcastapp.ui.ForecastDayAdapter;
 import com.example.weatherforcastapp.util.ActivityTransitions;
 import com.example.weatherforcastapp.util.ChartSamples;
+import com.example.weatherforcastapp.util.WeatherConditionTheme;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -58,6 +59,7 @@ public class HomeActivity extends AppCompatActivity {
     private WeatherPreferences prefs;
     private final WeatherRepository weatherRepo = new WeatherRepository();
     private ForecastDayAdapter forecastDayAdapter;
+    private int currentAnimationRes = -1;
 
     public static void startClearTask(Context context, double lat, double lon, @Nullable String name) {
         Intent i = new Intent(context, HomeActivity.class);
@@ -190,7 +192,7 @@ public class HomeActivity extends AppCompatActivity {
             double la = LocationContract.readLat(intent, 0);
             double lo = LocationContract.readLon(intent, 0);
             prefs.setCurrentLocation(la, lo, LocationContract.readDisplayName(intent));
-            prefs.setCurrentLocation(21.0278, 105.8342, "Hà Nội");
+            //prefs.setCurrentLocation(21.0278, 105.8342, "Hà Nội");
         }
 
         double lat = prefs.getCurrentLat();
@@ -285,6 +287,8 @@ public class HomeActivity extends AppCompatActivity {
         if (cond != null && cond.getText() != null) {
             binding.textConditionLine.setText(cond.getText());
         }
+        // Đổi màu nền theo điều kiện thời tiết và thời điểm trong ngày
+        applyWeatherTheme(cond != null ? cond.getCode() : null, cur.isDaytime());
         if (cond != null) {
             String u = WeatherApiIcons.url(cond.getIcon(), cur.isDaytime(), WeatherApiIcons.SIZE_HERO);
             if (u != null && !u.isEmpty()) {
@@ -395,5 +399,41 @@ public class HomeActivity extends AppCompatActivity {
         } catch (ParseException ignored) {
         }
         return "—";
+    }
+
+    private void applyWeatherTheme(@Nullable Integer conditionCode, boolean isDaytime) {
+        WeatherConditionTheme.Colors c = WeatherConditionTheme.resolve(conditionCode, isDaytime);
+        binding.bgGradientShift.setGradientColors(c.top, c.mid, c.bottom);
+        applyWeatherAnimation(conditionCode, isDaytime);
+    }
+
+    private void applyWeatherAnimation(@Nullable Integer conditionCode, boolean isDaytime) {
+        WeatherConditionTheme.AnimationType type = WeatherConditionTheme.resolveAnimation(conditionCode, isDaytime);
+        int animRes;
+
+        switch (type) {
+            case NIGHT:
+                animRes = R.raw.night;
+                break;
+            case CLOUDY:
+                animRes = R.raw.cloudy;
+                break;
+            case RAINY:
+                animRes = R.raw.rain;
+                break;
+            case STORM:
+                animRes = R.raw.storm;
+                break;
+            case SUNNY:
+            default:
+                animRes = R.raw.sunny;
+                break;
+        }
+
+        if (currentAnimationRes != animRes) {
+            currentAnimationRes = animRes;
+            binding.weatherAnimation.setAnimation(animRes);
+            binding.weatherAnimation.playAnimation();
+        }
     }
 }

@@ -11,7 +11,6 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.Priority;
 import com.google.android.gms.tasks.CancellationTokenSource;
 
-//claude
 import android.os.Handler;
 import android.os.Looper;
 
@@ -33,38 +32,6 @@ public final class LocationHelper {
     }
 
     public static void fetchCurrent(@NonNull Context context, @NonNull Callback callback) {
-//        original
-//        if (!hasPermission(context)) {
-//            callback.onError();
-//            return;
-//        }
-//        FusedLocationProviderClient client = LocationServices.getFusedLocationProviderClient(context);
-//        CancellationTokenSource cts = new CancellationTokenSource();
-//        client.getCurrentLocation(Priority.PRIORITY_BALANCED_POWER_ACCURACY, cts.getToken())
-////        chatgpt
-////        client.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, cts.getToken())
-//                .addOnSuccessListener(location -> {
-//                    if (location != null) {
-//                        callback.onLocation(location.getLatitude(), location.getLongitude());
-//                        return;
-//                    }
-//                    client.getLastLocation().addOnSuccessListener(last -> {
-//                        if (last != null) {
-//                            callback.onLocation(last.getLatitude(), last.getLongitude());
-//                        } else {
-//                            callback.onError();
-//                        }
-//                    }).addOnFailureListener(e -> callback.onError());
-//                })
-//                .addOnFailureListener(e -> client.getLastLocation()
-//                        .addOnSuccessListener(last -> {
-//                            if (last != null) {
-//                                callback.onLocation(last.getLatitude(), last.getLongitude());
-//                            } else {
-//                                callback.onError();
-//                            }
-//                        })
-//                        .addOnFailureListener(e2 -> callback.onError()));
         fetchCurrent(context, GPS_TIMEOUT_MS, callback);
     }
 
@@ -91,52 +58,54 @@ public final class LocationHelper {
         };
         mainHandler.postDelayed(timeoutRunnable, timeoutMs);
 
-        client.getCurrentLocation(Priority.PRIORITY_BALANCED_POWER_ACCURACY, cts.getToken())
-                .addOnSuccessListener(location -> {
-                    if (done[0]) return; // timeout đã xử lý trước
-                    if (location != null) {
-                        done[0] = true;
-                        mainHandler.removeCallbacks(timeoutRunnable);
-                        callback.onLocation(location.getLatitude(), location.getLongitude());
-                        return;
-                    }
-                    // getCurrentLocation trả null → thử getLastLocation
-                    client.getLastLocation().addOnSuccessListener(last -> {
+        try {
+            client.getCurrentLocation(Priority.PRIORITY_BALANCED_POWER_ACCURACY, cts.getToken())
+                    .addOnSuccessListener(location -> {
                         if (done[0]) return;
-                        done[0] = true;
-                        mainHandler.removeCallbacks(timeoutRunnable);
-                        if (last != null) {
-                            callback.onLocation(last.getLatitude(), last.getLongitude());
-                        } else {
-                            callback.onError();
+                        if (location != null) {
+                            done[0] = true;
+                            mainHandler.removeCallbacks(timeoutRunnable);
+                            callback.onLocation(location.getLatitude(), location.getLongitude());
+                            return;
                         }
-                    }).addOnFailureListener(e -> {
-                        if (done[0]) return;
-                        done[0] = true;
-                        mainHandler.removeCallbacks(timeoutRunnable);
-                        callback.onError();
-                    });
-                })
-                .addOnFailureListener(e -> {
-                    if (done[0]) return;
-                    // getCurrentLocation thất bại → thử getLastLocation
-                    client.getLastLocation()
-                            .addOnSuccessListener(last -> {
-                                if (done[0]) return;
-                                done[0] = true;
-                                mainHandler.removeCallbacks(timeoutRunnable);
-                                if (last != null) {
-                                    callback.onLocation(last.getLatitude(), last.getLongitude());
-                                } else {
-                                    callback.onError();
-                                }
-                            })
-                            .addOnFailureListener(e2 -> {
-                                if (done[0]) return;
-                                done[0] = true;
-                                mainHandler.removeCallbacks(timeoutRunnable);
+                        client.getLastLocation().addOnSuccessListener(last -> {
+                            if (done[0]) return;
+                            done[0] = true;
+                            mainHandler.removeCallbacks(timeoutRunnable);
+                            if (last != null) {
+                                callback.onLocation(last.getLatitude(), last.getLongitude());
+                            } else {
                                 callback.onError();
-                            });
-                });
+                            }
+                        }).addOnFailureListener(e -> {
+                            if (done[0]) return;
+                            done[0] = true;
+                            mainHandler.removeCallbacks(timeoutRunnable);
+                            callback.onError();
+                        });
+                    })
+                    .addOnFailureListener(e -> {
+                        if (done[0]) return;
+                        client.getLastLocation()
+                                .addOnSuccessListener(last -> {
+                                    if (done[0]) return;
+                                    done[0] = true;
+                                    mainHandler.removeCallbacks(timeoutRunnable);
+                                    if (last != null) {
+                                        callback.onLocation(last.getLatitude(), last.getLongitude());
+                                    } else {
+                                        callback.onError();
+                                    }
+                                })
+                                .addOnFailureListener(e2 -> {
+                                    if (done[0]) return;
+                                    done[0] = true;
+                                    mainHandler.removeCallbacks(timeoutRunnable);
+                                    callback.onError();
+                                });
+                    });
+        } catch (SecurityException e) {
+            callback.onError();
+        }
     }
 }

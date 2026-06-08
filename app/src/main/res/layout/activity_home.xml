@@ -10,6 +10,13 @@
         android:id="@+id/bgGradientShift"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/weatherAnimation"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0.35"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"/>
 
     <ImageView
         android:layout_width="match_parent"
