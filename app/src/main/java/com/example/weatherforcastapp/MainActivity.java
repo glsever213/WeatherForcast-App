@@ -19,6 +19,14 @@ import com.example.weatherforcastapp.util.ActivityTransitions;
 import com.example.weatherforcastapp.util.LocationHelper;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
+import android.location.Address;
+import android.location.Geocoder;
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 /**
  * Màn khởi động: đã có vị trí lưu → Home; chưa có → hỏi quyền vị trí (đồng ý / từ chối).
  */
@@ -27,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQ_LOCATION = 1001;
 
     private ActivityMainBinding binding;
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +51,12 @@ public class MainActivity extends AppCompatActivity {
         }
 
         showLocationOfferDialog();
+    }
+
+    @Override
+    protected void onDestroy() {
+        executor.shutdownNow();
+        super.onDestroy();
     }
 
     private void showLocationOfferDialog() {
@@ -97,11 +112,7 @@ public class MainActivity extends AppCompatActivity {
         LocationHelper.fetchCurrent(this, new LocationHelper.Callback() {
             @Override
             public void onLocation(double lat, double lon) {
-                binding.progressMain.setVisibility(android.view.View.GONE);
-                WeatherPreferences prefs = WeatherPreferences.get(MainActivity.this);
-                prefs.setCurrentLocation(lat, lon, getString(R.string.placeholder_location));
-                HomeActivity.startClearTask(MainActivity.this, lat, lon, prefs.getCurrentName());
-                finish();
+                fetchCityNameThenGoHome(lat, lon);
             }
 
             @Override
@@ -111,5 +122,47 @@ public class MainActivity extends AppCompatActivity {
                 goSearchOnboarding();
             }
         });
+    }
+
+    private void fetchCityNameThenGoHome(double lat, double lon) {
+        executor.execute(() -> {
+            String cityName = resolveCityName(lat, lon);
+            runOnUiThread(() -> {
+                if (isFinishing()) return;
+                binding.progressMain.setVisibility(android.view.View.GONE);
+                saveAndGoHome(lat, lon, cityName);
+            });
+        });
+    }
+
+    private String resolveCityName(double lat, double lon) {
+        if (!Geocoder.isPresent()) {
+            return getString(R.string.placeholder_location);
+        }
+        try {
+            Geocoder geocoder = new Geocoder(this, new Locale("vi", "VN"));
+            List<Address> addresses = geocoder.getFromLocation(lat, lon, 1);
+            if (addresses == null || addresses.isEmpty()) {
+                return getString(R.string.placeholder_location);
+            }
+            Address address = addresses.get(0);
+            if (address.getLocality() != null && !address.getLocality().isEmpty()) {
+                return address.getLocality();
+            }
+            if (address.getSubAdminArea() != null && !address.getSubAdminArea().isEmpty()) {
+                return address.getSubAdminArea();
+            }
+            if (address.getAdminArea() != null && !address.getAdminArea().isEmpty()) {
+                return address.getAdminArea();
+            }
+        } catch (IOException e) {}
+        return getString(R.string.placeholder_location);
+    }
+
+    private void saveAndGoHome(double lat, double lon, String cityName) {
+        WeatherPreferences prefs = WeatherPreferences.get(this);
+        prefs.setCurrentLocation(lat, lon, cityName);
+        HomeActivity.startClearTask(this, lat, lon, cityName);
+        finish();
     }
 }

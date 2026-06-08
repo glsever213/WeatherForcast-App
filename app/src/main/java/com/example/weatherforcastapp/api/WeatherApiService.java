@@ -2,6 +2,9 @@ package com.example.weatherforcastapp.api;
 
 import com.example.weatherforcastapp.model.api.CurrentWeatherResponse;
 import com.example.weatherforcastapp.model.api.ForecastResponse;
+import com.example.weatherforcastapp.model.api.LocationDto;
+
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -30,6 +33,15 @@ public interface WeatherApiService {
     Call<ForecastResponse> getForecast(
             @Query("q") String query,
             @Query("days") int days,
+            @Query("aqi") String aqi,
             @Query("lang") String lang
+    );
+
+    /**
+     * Search / autocomplete API của WeatherAPI trả về mảng location.
+     */
+    @GET("search.json")
+    Call<List<LocationDto>> search(
+            @Query("q") String query
     );
 }

@@ -123,5 +123,6 @@ public final class SavedLocationsAdapter extends RecyclerView.Adapter<SavedLocat
             super(binding.getRoot());
             this.binding = binding;
         }
+
     }
 }

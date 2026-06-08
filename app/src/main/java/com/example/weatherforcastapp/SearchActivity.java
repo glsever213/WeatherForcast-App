@@ -48,6 +48,8 @@ public class SearchActivity extends AppCompatActivity {
 
         binding.buttonCancel.setOnClickListener(v -> onCancel());
 
+        binding.buttonSearch.setOnClickListener(v -> runSearchFromInput());
+
         binding.editSearch.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_SEARCH || actionId == EditorInfo.IME_ACTION_DONE) {
                 runSearchFromInput();
@@ -56,10 +58,6 @@ public class SearchActivity extends AppCompatActivity {
             return false;
         });
 
-        binding.chipFakeHanoi.setOnClickListener(v ->
-                openPreview(new PopularCity("Hà Nội", 21.0285, 105.8542, false)));
-        binding.chipFakeHcmc.setOnClickListener(v ->
-                openPreview(new PopularCity("TP.HCM", 10.8231, 106.6297, false)));
         binding.chipLocate.setOnClickListener(v -> {
             if (!LocationHelper.hasPermission(this)) {
                 Toast.makeText(this, R.string.location_permission_message, Toast.LENGTH_SHORT).show();
@@ -98,9 +96,10 @@ public class SearchActivity extends AppCompatActivity {
         int flow = mode == MODE_ONBOARDING
                 ? LocationContract.FLOW_ONBOARDING
                 : LocationContract.FLOW_MANAGEMENT;
-        PreviewActivity.start(this, city.name, city.lat, city.lon, flow);
-        ActivityTransitions.slideIn(this);
-        finish();
+//        PreviewActivity.start(this, city.name, city.lat, city.lon, flow);
+//        ActivityTransitions.slideIn(this);
+//        finish();
+        PreviewBottomSheet.show(getSupportFragmentManager(), city.name, city.lat, city.lon, flow);
     }
 
     private void onCancel() {
@@ -114,6 +113,7 @@ public class SearchActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        super.onBackPressed();
         onCancel();
     }
 }

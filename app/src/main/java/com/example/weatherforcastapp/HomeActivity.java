@@ -23,10 +23,12 @@ import com.example.weatherforcastapp.model.api.CurrentDto;
 import com.example.weatherforcastapp.model.api.DayAggregateDto;
 import com.example.weatherforcastapp.model.api.ForecastBucketDto;
 import com.example.weatherforcastapp.model.api.ForecastResponse;
+import com.example.weatherforcastapp.model.api.HourItemDto;
 import com.example.weatherforcastapp.prefs.WeatherPreferences;
 import com.example.weatherforcastapp.ui.ForecastDayAdapter;
 import com.example.weatherforcastapp.util.ActivityTransitions;
 import com.example.weatherforcastapp.util.ChartSamples;
+import com.example.weatherforcastapp.util.WeatherConditionTheme;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -34,6 +36,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import android.graphics.Color;
 
 /**
  * Trang chủ: hero, MotionLayout, danh sách ngày; tải thời tiết qua {@link WeatherRepository}
@@ -53,6 +59,7 @@ public class HomeActivity extends AppCompatActivity {
     private WeatherPreferences prefs;
     private final WeatherRepository weatherRepo = new WeatherRepository();
     private ForecastDayAdapter forecastDayAdapter;
+    private int currentAnimationRes = -1;
 
     public static void startClearTask(Context context, double lat, double lon, @Nullable String name) {
         Intent i = new Intent(context, HomeActivity.class);
@@ -103,6 +110,10 @@ public class HomeActivity extends AppCompatActivity {
         binding.buttonOpenForecastDetail.setOnClickListener(this::openFiveDayForecastScreen);
 
         binding.swipeRefresh.setOnRefreshListener(this::onSwipeRefresh);
+
+//        if (!prefs.hasCurrentLocation()) {
+//            prefs.setCurrentLocation(21.03, 105.85, "Hà Nội");
+//        }
     }
 
     @Override
@@ -181,6 +192,7 @@ public class HomeActivity extends AppCompatActivity {
             double la = LocationContract.readLat(intent, 0);
             double lo = LocationContract.readLon(intent, 0);
             prefs.setCurrentLocation(la, lo, LocationContract.readDisplayName(intent));
+            //prefs.setCurrentLocation(21.0278, 105.8342, "Hà Nội");
         }
 
         double lat = prefs.getCurrentLat();
@@ -224,6 +236,50 @@ public class HomeActivity extends AppCompatActivity {
         if (cur == null) {
             return;
         }
+        if (r.getLocation() != null && r.getLocation().getName() != null) {
+            String realName = r.getLocation().getName();
+            binding.textLocationName.setText(realName);
+            prefs.setCurrentLocation(
+                    prefs.getCurrentLat(),
+                    prefs.getCurrentLon(),
+                    realName
+            );
+        }//Lấy location name từ Weather API
+        //binding.textCurrentTemp.setText(String.format(Locale.getDefault(), "%.0f°", cur.getTempC()));
+        binding.textConditionLine.setText(cur.getCondition().getText());
+
+// tia UV
+        if (cur.getUv() != null) {
+            binding.textMetricUv.setText(String.valueOf(cur.getUv()));
+        }
+
+// Humidity
+        if (cur.getHumidity() != null) {
+            binding.textMetricHumidity.setText(cur.getHumidity() + "%");
+        }
+//Nhiet do cam nhan
+        if (cur.getFeelslikeC() != null) {
+            binding.textMetricFeels.setText(
+                    String.format(Locale.getDefault(), "%.0f°", cur.getFeelslikeC())
+            );
+        }
+
+// Huong gio
+        if (cur.getWindKph() != null && cur.getWindKph() != null) {
+            binding.textMetricWind.setText(cur.getWindKph() + " km/h");
+        }
+
+// Ap suat
+        if (cur.getPressureMb() != null) {
+            binding.textMetricPressure.setText(cur.getPressureMb() + " mb");
+        }
+//AQI
+        if (cur.getAirQuality() != null) {
+
+            int aqi = cur.getAirQuality().getUsEpaIndex();
+            binding.textAqi.setText("AQI " + aqi);
+        }
+
         if (cur.getTempC() != null) {
             binding.textCurrentTemp.setText(String.format(Locale.getDefault(), "%.0f°", cur.getTempC()));
         }
@@ -231,6 +287,8 @@ public class HomeActivity extends AppCompatActivity {
         if (cond != null && cond.getText() != null) {
             binding.textConditionLine.setText(cond.getText());
         }
+        // Đổi màu nền theo điều kiện thời tiết và thời điểm trong ngày
+        applyWeatherTheme(cond != null ? cond.getCode() : null, cur.isDaytime());
         if (cond != null) {
             String u = WeatherApiIcons.url(cond.getIcon(), cur.isDaytime(), WeatherApiIcons.SIZE_HERO);
             if (u != null && !u.isEmpty()) {
@@ -243,8 +301,17 @@ public class HomeActivity extends AppCompatActivity {
         }
 
         ForecastBucketDto fb = r.getForecast();
-        if (fb == null || fb.getForecastday() == null || fb.getForecastday().isEmpty()) {
-            return;
+        if (fb != null && fb.getForecastday() != null && !fb.getForecastday().isEmpty()) {
+
+            ApiForecastDayDto today = fb.getForecastday().get(0);
+
+            if (today.getAstro() != null) {
+                String sunrise = today.getAstro().getSunrise();
+                String sunset = today.getAstro().getSunset();
+
+                binding.textMetricSun.setText("↑ " + sunrise + " / ↓ " + sunset);
+            }
+
         }
         List<ApiForecastDayDto> days = fb.getForecastday();
         List<ForecastDayAdapter.Row> rows = new ArrayList<>();
@@ -262,19 +329,61 @@ public class HomeActivity extends AppCompatActivity {
                     high = String.format(Locale.getDefault(), "%.0f°", day.getMaxtempC());
                 }
             }
+            String conditionText = "—";
+            if (day != null && day.getCondition() != null) {
+                conditionText = day.getCondition().getText();
+            }
             String label = formatForecastRowLabel(i, d != null ? d.getDate() : null);
-            rows.add(new ForecastDayAdapter.Row(label, low, high));
+            rows.add(new ForecastDayAdapter.Row(label, low, high, conditionText));
         }
         forecastDayAdapter.setRows(rows);
+
+        if (fb != null && fb.getForecastday() != null && !fb.getForecastday().isEmpty()) {
+            ApiForecastDayDto today = fb.getForecastday().get(0);
+
+            if (today.getHour() != null && !today.getHour().isEmpty()) {
+
+                List<Entry> entries = new ArrayList<>();
+
+                for (int i = 0; i < today.getHour().size(); i+=3) {
+                    HourItemDto h = today.getHour().get(i);
+
+                    if (h.getTempC() != null) {
+                        entries.add(new Entry(i, h.getTempC().floatValue()));
+                    }
+                }
+
+                updateHourlyChart(entries);
+            }
+        }
+    }
+
+    private void updateHourlyChart(List<Entry> entries) {
+
+        LineDataSet set = new LineDataSet(entries, "°C");
+
+        set.setColor(getColor(R.color.chart_line));
+        set.setLineWidth(2f);
+        set.setDrawCircles(true);
+        set.setCircleColor(Color.WHITE);
+        set.setCircleHoleColor(getColor(R.color.chart_line));
+        set.setDrawValues(true);
+        set.setValueTextColor(Color.DKGRAY);
+        set.setMode(LineDataSet.Mode.CUBIC_BEZIER);
+
+        LineData data = new LineData(set);
+
+        binding.chartHourlyTemp.setData(data);
+        binding.chartHourlyTemp.invalidate();
     }
 
     private String formatForecastRowLabel(int indexInList, @Nullable String yyyyMmDd) {
         if (indexInList == 0) {
             return getString(R.string.forecast_today_section);
         }
-        if (indexInList == 1) {
-            return getString(R.string.forecast_row_tomorrow);
-        }
+//        if (indexInList == 1) {
+//            return getString(R.string.forecast_row_tomorrow);
+//        }
         if (yyyyMmDd == null || yyyyMmDd.isEmpty()) {
             return "—";
         }
@@ -283,10 +392,48 @@ public class HomeActivity extends AppCompatActivity {
             Date d = in.parse(yyyyMmDd);
             if (d != null) {
                 SimpleDateFormat out = new SimpleDateFormat("EEE", new Locale("vi", "VN"));
-                return out.format(d);
+                String day = out.format(d);
+                return Character.toUpperCase(day.charAt(0)) + day.substring(1);
+                //return out.format(d);
             }
         } catch (ParseException ignored) {
         }
         return "—";
+    }
+
+    private void applyWeatherTheme(@Nullable Integer conditionCode, boolean isDaytime) {
+        WeatherConditionTheme.Colors c = WeatherConditionTheme.resolve(conditionCode, isDaytime);
+        binding.bgGradientShift.setGradientColors(c.top, c.mid, c.bottom);
+        applyWeatherAnimation(conditionCode, isDaytime);
+    }
+
+    private void applyWeatherAnimation(@Nullable Integer conditionCode, boolean isDaytime) {
+        WeatherConditionTheme.AnimationType type = WeatherConditionTheme.resolveAnimation(conditionCode, isDaytime);
+        int animRes;
+
+        switch (type) {
+            case NIGHT:
+                animRes = R.raw.night;
+                break;
+            case CLOUDY:
+                animRes = R.raw.cloudy;
+                break;
+            case RAINY:
+                animRes = R.raw.rain;
+                break;
+            case STORM:
+                animRes = R.raw.storm;
+                break;
+            case SUNNY:
+            default:
+                animRes = R.raw.sunny;
+                break;
+        }
+
+        if (currentAnimationRes != animRes) {
+            currentAnimationRes = animRes;
+            binding.weatherAnimation.setAnimation(animRes);
+            binding.weatherAnimation.playAnimation();
+        }
     }
 }

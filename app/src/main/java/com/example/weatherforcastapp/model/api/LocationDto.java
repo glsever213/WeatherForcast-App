@@ -14,6 +14,12 @@ public final class LocationDto {
     @SerializedName("country")
     private String country;
 
+    @SerializedName("lat")
+    private double lat;
+
+    @SerializedName("lon")
+    private double lon;
+
     public String getName() {
         return name;
     }
@@ -24,5 +30,13 @@ public final class LocationDto {
 
     public String getCountry() {
         return country;
+    }
+
+    public double getLat() {
+        return lat;
+    }
+
+    public double getLon() {
+        return lon;
     }
 }

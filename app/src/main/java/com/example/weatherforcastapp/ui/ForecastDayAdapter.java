@@ -17,20 +17,22 @@ public final class ForecastDayAdapter extends RecyclerView.Adapter<ForecastDayAd
         public final String dayLabel;
         public final String low;
         public final String high;
+        public final String condition;
 
-        public Row(String dayLabel, String low, String high) {
+        public Row(String dayLabel, String low, String high, String condition) {
             this.dayLabel = dayLabel;
             this.low = low;
             this.high = high;
+            this.condition = condition;
         }
     }
 
     private final List<Row> data = new ArrayList<>();
 
     public ForecastDayAdapter() {
-        data.add(new Row("Hôm nay", "24°", "29°"));
-        data.add(new Row("Ngày mai", "24°", "30°"));
-        data.add(new Row("CN", "24°", "30°"));
+        data.add(new Row("Hôm nay", "24°", "29°", "Có mây"));
+        data.add(new Row("Ngày mai", "24°", "30°", "Có mây"));
+        data.add(new Row("CN", "24°", "30°", "Có mây"));
     }
 
     public void setRows(List<Row> rows) {
@@ -52,6 +54,7 @@ public final class ForecastDayAdapter extends RecyclerView.Adapter<ForecastDayAd
         holder.binding.textDayLabel.setText(r.dayLabel);
         holder.binding.textLow.setText(r.low);
         holder.binding.textHigh.setText(r.high);
+        holder.binding.textCondition.setText(r.condition);
     }
 
     @Override
