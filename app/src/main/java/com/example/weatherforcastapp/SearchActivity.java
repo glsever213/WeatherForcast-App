@@ -1,31 +1,19 @@
 package com.example.weatherforcastapp;
 
 import android.os.Bundle;
-import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.example.weatherforcastapp.data.PopularCity;
 import com.example.weatherforcastapp.databinding.ActivitySearchBinding;
 import com.example.weatherforcastapp.location.LocationContract;
-import com.example.weatherforcastapp.model.api.LocationDto;
-import com.example.weatherforcastapp.search.GeocodingRepository;
-import com.example.weatherforcastapp.search.LocationLabelFormatter;
-import com.example.weatherforcastapp.search.SearchResultAdapter;
+import com.example.weatherforcastapp.search.FakeGeocoding;
 import com.example.weatherforcastapp.util.ActivityTransitions;
 import com.example.weatherforcastapp.util.LocationHelper;
 
-import java.util.List;
-
-/**
- * Tìm kiếm địa điểm thật bằng WeatherAPI Search/Autocomplete API.
- * Enter hoặc chọn kết quả → PreviewActivity với lat/lon + tên hiển thị.
- */
 public class SearchActivity extends AppCompatActivity {
 
     public static final String EXTRA_MODE = "extra_mode";
@@ -33,20 +21,20 @@ public class SearchActivity extends AppCompatActivity {
     public static final int MODE_MANAGEMENT = 2;
 
     private ActivitySearchBinding binding;
-    private final GeocodingRepository repository = new GeocodingRepository();
-    private SearchResultAdapter adapter;
     private int mode = MODE_ONBOARDING;
 
     public static void startOnboarding(AppCompatActivity from) {
-        android.content.Intent i = new android.content.Intent(from, SearchActivity.class);
-        i.putExtra(EXTRA_MODE, MODE_ONBOARDING);
-        from.startActivity(i);
+        open(from, MODE_ONBOARDING);
     }
 
     public static void startForManagement(AppCompatActivity from) {
-        android.content.Intent i = new android.content.Intent(from, SearchActivity.class);
-        i.putExtra(EXTRA_MODE, MODE_MANAGEMENT);
-        from.startActivity(i);
+        open(from, MODE_MANAGEMENT);
+    }
+
+    private static void open(AppCompatActivity from, int mode) {
+        android.content.Intent intent = new android.content.Intent(from, SearchActivity.class);
+        intent.putExtra(EXTRA_MODE, mode);
+        from.startActivity(intent);
     }
 
     @Override
@@ -57,130 +45,88 @@ public class SearchActivity extends AppCompatActivity {
 
         mode = getIntent().getIntExtra(EXTRA_MODE, MODE_ONBOARDING);
 
-        adapter = new SearchResultAdapter(this::openPreview);
-        binding.recyclerSearchResults.setLayoutManager(new LinearLayoutManager(this));
-        binding.recyclerSearchResults.setAdapter(adapter);
-        binding.recyclerSearchResults.setHasFixedSize(true);
-
-        showIdleState();
-
         binding.buttonCancel.setOnClickListener(v -> onCancel());
-        binding.buttonSearch.setOnClickListener(v -> runSearchFromInput());
-
         binding.editSearch.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_SEARCH || actionId == EditorInfo.IME_ACTION_DONE) {
-                runSearchFromInput();
+                searchFromInput();
                 return true;
             }
             return false;
         });
 
-        binding.chipLocate.setOnClickListener(v -> {
-            if (!LocationHelper.hasPermission(this)) {
-                Toast.makeText(this, R.string.location_permission_message, Toast.LENGTH_SHORT).show();
-                return;
-            }
-            LocationHelper.fetchCurrent(this, new LocationHelper.Callback() {
-                @Override
-                public void onLocation(double lat, double lon) {
-                    openPreview(lat, lon, getString(R.string.locate_chip));
-                }
-
-                @Override
-                public void onError() {
-                    Toast.makeText(SearchActivity.this, R.string.search_error, Toast.LENGTH_SHORT).show();
-                }
-            });
-        });
-
-        binding.editSearch.requestFocus();
+        binding.chipLocate.setOnClickListener(v -> locateCurrentPosition());
     }
 
-    private void runSearchFromInput() {
-        CharSequence cs = binding.editSearch.getText();
-        String q = cs != null ? cs.toString().trim() : "";
-        if (q.isEmpty()) {
+    private void searchFromInput() {
+        String query = getQuery();
+        if (query.isEmpty()) {
             Toast.makeText(this, R.string.search_empty, Toast.LENGTH_SHORT).show();
-            showIdleState();
+            return;
+        }
+        searchAndOpen(query);
+    }
+
+    private String getQuery() {
+        CharSequence text = binding.editSearch.getText();
+        return text == null ? "" : text.toString().trim();
+    }
+
+    private void searchAndOpen(String query) {
+        binding.editSearch.clearFocus();
+        FakeGeocoding.search(this, query, new FakeGeocoding.Callback() {
+            @Override
+            public void onSuccess(@Nullable FakeGeocoding.Result result) {
+                if (result == null) {
+                    Toast.makeText(SearchActivity.this, R.string.search_empty, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                openPreview(new PopularCity(result.displayName, result.lat, result.lon, false));
+            }
+
+            @Override
+            public void onError(String message) {
+                showSearchError();
+            }
+        });
+    }
+
+    private void locateCurrentPosition() {
+        if (!LocationHelper.hasPermission(this)) {
+            Toast.makeText(this, R.string.location_permission_message, Toast.LENGTH_SHORT).show();
             return;
         }
 
-        hideKeyboard();
-        showLoadingState(q);
-        repository.search(q, new GeocodingRepository.Listener() {
+        LocationHelper.fetchCurrent(this, new LocationHelper.Callback() {
             @Override
-            public void onSuccess(@NonNull List<LocationDto> results) {
-                if (isFinishing() || isDestroyed()) {
-                    return;
-                }
-                if (results.isEmpty()) {
-                    showEmptyResults(q);
-                    return;
-                }
-                adapter.submitList(results);
-                binding.recyclerSearchResults.setVisibility(View.VISIBLE);
-                binding.textSearchState.setVisibility(View.GONE);
-                binding.progressSearch.setVisibility(View.GONE);
+            public void onLocation(double lat, double lon) {
+                openPreview(new PopularCity(getString(R.string.locate_chip), lat, lon, true));
             }
 
             @Override
-            public void onFailure(@Nullable String message) {
-                if (isFinishing() || isDestroyed()) {
-                    return;
-                }
-                adapter.clear();
-                binding.recyclerSearchResults.setVisibility(View.GONE);
-                binding.progressSearch.setVisibility(View.GONE);
-                binding.textSearchState.setVisibility(View.VISIBLE);
-                binding.textSearchState.setText(
-                        message == null || message.trim().isEmpty()
-                                ? getString(R.string.search_error)
-                                : message
-                );
-                Toast.makeText(SearchActivity.this, R.string.search_error, Toast.LENGTH_SHORT).show();
+            public void onError() {
+                Toast.makeText(SearchActivity.this, R.string.search_hint, Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    private void showIdleState() {
-        adapter.clear();
-        binding.progressSearch.setVisibility(View.GONE);
-        binding.recyclerSearchResults.setVisibility(View.GONE);
-        binding.textSearchState.setVisibility(View.VISIBLE);
-        binding.textSearchState.setText(R.string.search_idle);
+    private void showSearchError() {
+        Toast.makeText(
+                this,
+                "Không tải được danh sách địa điểm. Kiểm tra mạng hoặc dữ liệu vị trí.",
+                Toast.LENGTH_SHORT
+        ).show();
     }
 
-    private void showLoadingState(String query) {
-        adapter.clear();
-        binding.recyclerSearchResults.setVisibility(View.GONE);
-        binding.textSearchState.setVisibility(View.VISIBLE);
-        binding.textSearchState.setText(getString(R.string.search_loading, query));
-        binding.progressSearch.setVisibility(View.VISIBLE);
-    }
-
-    private void showEmptyResults(String query) {
-        adapter.clear();
-        binding.recyclerSearchResults.setVisibility(View.GONE);
-        binding.progressSearch.setVisibility(View.GONE);
-        binding.textSearchState.setVisibility(View.VISIBLE);
-        binding.textSearchState.setText(getString(R.string.search_no_results, query));
-    }
-
-    private void openPreview(@NonNull LocationDto location) {
-        openPreview(location.getLat(), location.getLon(), LocationLabelFormatter.displayName(location));
-    }
-
-    private void openPreview(double lat, double lon, @NonNull String displayName) {
+    private void openPreview(PopularCity city) {
         int flow = mode == MODE_ONBOARDING
                 ? LocationContract.FLOW_ONBOARDING
                 : LocationContract.FLOW_MANAGEMENT;
-        PreviewActivity.start(this, displayName, lat, lon, flow);
+        PreviewActivity.start(this, city.name, city.lat, city.lon, flow);
         ActivityTransitions.slideIn(this);
         finish();
     }
 
     private void onCancel() {
-        repository.cancel();
         if (mode == MODE_ONBOARDING) {
             finishAffinity();
         } else {
@@ -190,20 +136,7 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onDestroy() {
-        repository.cancel();
-        super.onDestroy();
-    }
-
-    @Override
     public void onBackPressed() {
-        onCancel();
-    }
-
-    private void hideKeyboard() {
-        InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-        if (imm != null) {
-            imm.hideSoftInputFromWindow(binding.editSearch.getWindowToken(), 0);
-        }
+        super.onBackPressed();
     }
 }
