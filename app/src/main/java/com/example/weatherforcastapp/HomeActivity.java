@@ -94,6 +94,9 @@ public class HomeActivity extends AppCompatActivity {
         binding.scrollHome.setOnScrollChangeListener((NestedScrollView.OnScrollChangeListener)
                 (v, scrollX, scrollY, oldScrollX, oldScrollY) -> applyHeroVisibility(scrollY));
 
+        binding.buttonAI.setOnClickListener(v -> {
+            Intent intent = new Intent(this, AIActivity.class);
+            startActivity(intent);});
         binding.buttonAddLocation.setOnClickListener(v -> {
             v.animate().scaleX(0.92f).scaleY(0.92f).setDuration(70).withEndAction(() ->
                     v.animate().scaleX(1f).scaleY(1f).setDuration(100).withEndAction(() -> {

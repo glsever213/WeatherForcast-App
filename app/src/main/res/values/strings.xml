@@ -21,7 +21,7 @@
     <string name="locate_chip">Định vị</string>
 
     <string name="manage_cities_title">Quản lý thành phố</string>
-    <string name="forecast_5d">Dự báo 5 ngày</string>
+    <string name="forecast_5d">Dự báo 3 ngày</string>
     <string name="forecast_5d_screen_title">Dự báo tiếp theo</string>
     <string name="forecast_today_section">Hôm nay</string>
     <string name="forecast_today_date_placeholder">28/3, 2026</string>
@@ -58,4 +58,7 @@
 
     <string name="forecast_row_tomorrow">Ngày mai</string>
     <string name="weather_load_failed">Không tải được dữ liệu thời tiết. Kiểm tra mạng hoặc API key.</string>
+
+    <string name="ai_message">Xin chào,\nHôm nay tôi có thể giúp gì cho bạn?</string>
+    <string name="ai_askinput">Hỏi gì đó</string>
 </resources>

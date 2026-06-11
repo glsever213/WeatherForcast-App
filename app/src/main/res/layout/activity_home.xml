@@ -46,7 +46,13 @@
                         android:layout_height="wrap_content"
                         android:gravity="end|center_vertical"
                         android:orientation="horizontal">
-
+                        <ImageButton
+                            android:id="@+id/buttonAI"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:contentDescription="AI Assistant"
+                            android:src="@drawable/ic_ai" />
                         <ImageButton
                             android:id="@+id/buttonAddLocation"
                             android:layout_width="48dp"
@@ -199,12 +205,6 @@
                                         android:textSize="17sp"
                                         android:textStyle="bold" />
 
-<!--                                    <TextView-->
-<!--                                        android:layout_width="wrap_content"-->
-<!--                                        android:layout_height="wrap_content"-->
-<!--                                        android:text="@string/more_detail"-->
-<!--                                        android:textColor="@color/text_on_light"-->
-<!--                                        android:textSize="14sp" />-->
                                 </LinearLayout>
 
                                 <androidx.recyclerview.widget.RecyclerView
