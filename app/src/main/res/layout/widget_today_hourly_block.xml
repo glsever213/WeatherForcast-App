@@ -7,54 +7,54 @@
     android:layout_height="wrap_content"
     android:clipToPadding="false">
 
-    <com.google.android.material.card.MaterialCardView
+<com.google.android.material.card.MaterialCardView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardBackgroundColor="@android:color/transparent"
+    app:cardCornerRadius="22dp"
+    app:cardElevation="0dp"
+    app:strokeColor="@color/glass_stroke_on_dark"
+    app:strokeWidth="1dp">
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardBackgroundColor="@android:color/transparent"
-        app:cardCornerRadius="22dp"
-        app:cardElevation="0dp"
-        app:strokeColor="@color/glass_stroke_on_dark"
-        app:strokeWidth="1dp">
+        android:orientation="vertical"
+        android:padding="14dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="14dp">
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
-            <LinearLayout
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/textTodaySectionTitle"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:layout_weight="1"
+                android:text="@string/forecast_today_section"
+                android:textColor="@color/text_primary_on_dark"
+                android:textSize="17sp"
+                android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/textTodaySectionTitle"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/forecast_today_section"
-                    android:textColor="@color/text_primary_on_dark"
-                    android:textSize="17sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/textTodayDateLine"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/text_secondary_on_dark"
-                    android:textSize="13sp"
-                    tools:text="28/3" />
-            </LinearLayout>
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerTodayHourly"
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/textTodayDateLine"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:clipToPadding="false"
-                android:paddingEnd="4dp"
-                tools:listitem="@layout/item_hourly_forecast_pill_dark" />
+                android:textColor="@color/text_secondary_on_dark"
+                android:textSize="13sp"
+                tools:text="28/3" />
         </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerTodayHourly"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:clipToPadding="false"
+            android:paddingEnd="4dp"
+            tools:listitem="@layout/item_hourly_forecast_pill_dark" />
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>
 </eightbitlab.com.blurview.BlurView>

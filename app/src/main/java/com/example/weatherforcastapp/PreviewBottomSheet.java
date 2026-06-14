@@ -189,29 +189,25 @@ public class PreviewBottomSheet extends BottomSheetDialogFragment {
 
     private void onFabClicked(String cityName, double lat, double lon, int flowMode) {
         WeatherPreferences prefs = WeatherPreferences.get(requireContext());
-        SavedLocation loc = new SavedLocation(
-                cityName, lat, lon, getString(R.string.frame_note));
+        SavedLocation loc = new SavedLocation(cityName, lat, lon, getString(R.string.frame_note));
 
-        if (flowMode == LocationContract.FLOW_ONBOARDING) {
-            prefs.setCurrentLocation(lat, lon, cityName);
-            prefs.addOrUpdateLocation(loc);
-            dismiss();
-            HomeActivity.startClearTask(requireContext(), lat, lon, cityName);
-            requireActivity().finishAffinity();
-            return;
-        }
+//        if (flowMode == LocationContract.FLOW_ONBOARDING) {
+//            prefs.setCurrentLocation(lat, lon, cityName);
+//            prefs.addOrUpdateLocation(loc);
+//            dismiss();
+//            HomeActivity.startClearTask(requireContext(), lat, lon, cityName);
+//            requireActivity().finishAffinity();
+//            return;
+//        }
 
         boolean added = prefs.addOrUpdateLocation(loc);
         if (!added) {
-            Toast.makeText(requireContext(), R.string.max_locations_reached,
-                    Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), R.string.max_locations_reached, Toast.LENGTH_SHORT).show();
             return;
         }
 
         markFabAsSaved();
-
+        Toast.makeText(requireContext(), "Đã thêm địa điểm", Toast.LENGTH_SHORT).show();
         dismiss();
-        HomeActivity.startClearTop((androidx.appcompat.app.AppCompatActivity) requireActivity(),
-                lat, lon, cityName);
     }
 }
