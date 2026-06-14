@@ -236,44 +236,33 @@ public class HomeActivity extends AppCompatActivity {
         if (cur == null) {
             return;
         }
-        if (r.getLocation() != null && r.getLocation().getName() != null) {
-            String realName = r.getLocation().getName();
-            binding.textLocationName.setText(realName);
-            prefs.setCurrentLocation(
-                    prefs.getCurrentLat(),
-                    prefs.getCurrentLon(),
-                    realName
-            );
-        }//Lấy location name từ Weather API
         //binding.textCurrentTemp.setText(String.format(Locale.getDefault(), "%.0f°", cur.getTempC()));
         binding.textConditionLine.setText(cur.getCondition().getText());
 
-// tia UV
+        // tia UV
         if (cur.getUv() != null) {
             binding.textMetricUv.setText(String.valueOf(cur.getUv()));
         }
 
-// Humidity
+        // Humidity
         if (cur.getHumidity() != null) {
             binding.textMetricHumidity.setText(cur.getHumidity() + "%");
         }
-//Nhiet do cam nhan
+        //Nhiet do cam nhan
         if (cur.getFeelslikeC() != null) {
             binding.textMetricFeels.setText(
                     String.format(Locale.getDefault(), "%.0f°", cur.getFeelslikeC())
             );
         }
-
-// Huong gio
+        // Huong gio
         if (cur.getWindKph() != null && cur.getWindKph() != null) {
             binding.textMetricWind.setText(cur.getWindKph() + " km/h");
         }
-
-// Ap suat
+        // Ap suat
         if (cur.getPressureMb() != null) {
             binding.textMetricPressure.setText(cur.getPressureMb() + " mb");
         }
-//AQI
+        //AQI
         if (cur.getAirQuality() != null) {
 
             int aqi = cur.getAirQuality().getUsEpaIndex();

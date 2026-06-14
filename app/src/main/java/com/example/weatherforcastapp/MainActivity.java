@@ -146,14 +146,14 @@ public class MainActivity extends AppCompatActivity {
                 return getString(R.string.placeholder_location);
             }
             Address address = addresses.get(0);
-            if (address.getLocality() != null && !address.getLocality().isEmpty()) {
-                return address.getLocality();
+            if (address.getAdminArea() != null && !address.getAdminArea().isEmpty()) {
+                return address.getAdminArea();
             }
             if (address.getSubAdminArea() != null && !address.getSubAdminArea().isEmpty()) {
                 return address.getSubAdminArea();
             }
-            if (address.getAdminArea() != null && !address.getAdminArea().isEmpty()) {
-                return address.getAdminArea();
+            if (address.getLocality() != null && !address.getLocality().isEmpty()) {
+                return address.getLocality();
             }
         } catch (IOException e) {}
         return getString(R.string.placeholder_location);
