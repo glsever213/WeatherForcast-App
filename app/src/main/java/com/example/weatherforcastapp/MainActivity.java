@@ -17,6 +17,7 @@ import com.example.weatherforcastapp.HomeActivity;
 import com.example.weatherforcastapp.SearchActivity;
 import com.example.weatherforcastapp.util.ActivityTransitions;
 import com.example.weatherforcastapp.util.LocationHelper;
+import com.example.weatherforcastapp.util.LocationNameResolver;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import android.location.Address;
@@ -126,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void fetchCityNameThenGoHome(double lat, double lon) {
         executor.execute(() -> {
-            String cityName = resolveCityName(lat, lon);
+            String cityName = LocationNameResolver.resolve(this, lat, lon, getString(R.string.placeholder_location));
             runOnUiThread(() -> {
                 if (isFinishing()) return;
                 binding.progressMain.setVisibility(android.view.View.GONE);
@@ -135,29 +136,29 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private String resolveCityName(double lat, double lon) {
-        if (!Geocoder.isPresent()) {
-            return getString(R.string.placeholder_location);
-        }
-        try {
-            Geocoder geocoder = new Geocoder(this, new Locale("vi", "VN"));
-            List<Address> addresses = geocoder.getFromLocation(lat, lon, 1);
-            if (addresses == null || addresses.isEmpty()) {
-                return getString(R.string.placeholder_location);
-            }
-            Address address = addresses.get(0);
-            if (address.getLocality() != null && !address.getLocality().isEmpty()) {
-                return address.getLocality();
-            }
-            if (address.getSubAdminArea() != null && !address.getSubAdminArea().isEmpty()) {
-                return address.getSubAdminArea();
-            }
-            if (address.getAdminArea() != null && !address.getAdminArea().isEmpty()) {
-                return address.getAdminArea();
-            }
-        } catch (IOException e) {}
-        return getString(R.string.placeholder_location);
-    }
+//    private String resolveCityName(double lat, double lon) {
+//        if (!Geocoder.isPresent()) {
+//            return getString(R.string.placeholder_location);
+//        }
+//        try {
+//            Geocoder geocoder = new Geocoder(this, new Locale("vi", "VN"));
+//            List<Address> addresses = geocoder.getFromLocation(lat, lon, 1);
+//            if (addresses == null || addresses.isEmpty()) {
+//                return getString(R.string.placeholder_location);
+//            }
+//            Address address = addresses.get(0);
+//            if (address.getAdminArea() != null && !address.getAdminArea().isEmpty()) {
+//                return address.getAdminArea();
+//            }
+//            if (address.getSubAdminArea() != null && !address.getSubAdminArea().isEmpty()) {
+//                return address.getSubAdminArea();
+//            }
+//            if (address.getLocality() != null && !address.getLocality().isEmpty()) {
+//                return address.getLocality();
+//            }
+//        } catch (IOException e) {}
+//        return getString(R.string.placeholder_location);
+//    }
 
     private void saveAndGoHome(double lat, double lon, String cityName) {
         WeatherPreferences prefs = WeatherPreferences.get(this);

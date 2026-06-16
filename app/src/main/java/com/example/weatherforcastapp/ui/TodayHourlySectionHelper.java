@@ -1,6 +1,10 @@
 package com.example.weatherforcastapp.ui;
 
 import android.graphics.drawable.Drawable;
+import android.graphics.Outline;
+import android.util.TypedValue;
+import android.view.View;
+import android.view.ViewOutlineProvider;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -78,6 +82,28 @@ public final class TodayHourlySectionHelper {
                 blurView.setOverlayColor(0);
                 blurView.setBackgroundColor(0x12FFFFFF);
             }
+
+            // Bo góc BlurView
+            float radius = TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP,
+                    22,
+                    activity.getResources().getDisplayMetrics()
+            );
+
+            blurView.setClipToOutline(true);
+
+            blurView.setOutlineProvider(new ViewOutlineProvider() {
+                @Override
+                public void getOutline(View view, Outline outline) {
+                    outline.setRoundRect(
+                            0,
+                            0,
+                            view.getWidth(),
+                            view.getHeight(),
+                            radius
+                    );
+                }
+            });
         } catch (Throwable ignored) {
             blurView.setOverlayColor(0);
             blurView.setBackgroundColor(0x12FFFFFF);

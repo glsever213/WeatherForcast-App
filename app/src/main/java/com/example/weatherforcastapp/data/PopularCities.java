@@ -11,9 +11,7 @@ public final class PopularCities {
 
     public static List<PopularCity> all() {
         return Collections.unmodifiableList(Arrays.asList(
-                new PopularCity("Định vị", 0, 0, true),
                 new PopularCity("Hà Nội", 21.0285, 105.8542, true),
-                new PopularCity("Buôn Ma Thuột", 12.6667, 108.0500, false),
                 new PopularCity("Cẩm Phả", 21.0103, 107.2425, false),
                 new PopularCity("Đà Lạt", 11.9404, 108.4583, false),
                 new PopularCity("Đà Nẵng", 16.0544, 108.2022, false),

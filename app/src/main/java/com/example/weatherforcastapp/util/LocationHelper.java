@@ -15,7 +15,7 @@ import android.os.Handler;
 import android.os.Looper;
 
 public final class LocationHelper {
-    public static final long GPS_TIMEOUT_MS = 10_000L;
+    public static final long GPS_TIMEOUT_MS = 20_000L;
 
     public interface Callback {
         void onLocation(double lat, double lon);

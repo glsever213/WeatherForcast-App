@@ -23,7 +23,7 @@
     <string name="slot_preview_day_icons">Hàng icon ban ngày (theo cột) — khung</string>
     <string name="slot_preview_night_row">Hàng icon ban đêm — khung</string>
     <string name="slot_preview_wind_row">Hàng gió + km/h — khung</string>
-    <string name="locate_chip">Định vị</string>
+    <string name="locate_chip">Vị trí hiện tại</string>
 
     <string name="manage_cities_title">Quản lý thành phố</string>
     <string name="forecast_5d">Dự báo 5 ngày</string>
@@ -59,8 +59,8 @@
     <string name="max_locations_reached">Đã đạt tối đa 20 địa điểm</string>
     <string name="location_added">Đã thêm địa điểm</string>
     <string name="location_already_saved">Đã lưu</string>
-    <string name="preview_view_detail">Xem chi tiết</string>
-    <string name="search_empty">Nhập tên địa điểm rồi bấm Enter</string>
+    <string name="preview_add">Thêm địa điểm</string>
+    <string name="search_empty">Không tìm thấy địa điểm!</string>
     <string name="search_not_found">Không có kết quả giả cho chuỗi này (team nối API)</string>
 
     <string name="forecast_row_tomorrow">Ngày mai</string>
