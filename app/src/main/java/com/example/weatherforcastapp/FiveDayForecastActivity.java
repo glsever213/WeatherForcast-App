@@ -62,8 +62,6 @@ public class FiveDayForecastActivity extends AppCompatActivity {
             finish();
             ActivityTransitions.slideOut(this);
         });
-        binding.buttonSettingsForecast.setOnClickListener(v ->
-                Toast.makeText(this, R.string.settings, Toast.LENGTH_SHORT).show());
 
         binding.blockForecast5dTable.recyclerForecast5dTable.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         adapter = new DailyForecastAdapter(new ArrayList<>());
@@ -134,28 +132,40 @@ public class FiveDayForecastActivity extends AppCompatActivity {
             String iconCode = "";
             String rainChance = "";
             String feelsLike = "";
+            String wind = "";
+            String humidity = "";
+            String uv = "";
 
             if (day != null) {
                 if (day.getMintempC() != null) {
-                    min = String.format(Locale.getDefault(), "%.0f°", day.getMintempC());
+                    min = String.format(Locale.getDefault(), "%.0f°", day.getMintempC());//lay nhiet do thap nhat
                 }
                 if (day.getMaxtempC() != null) {
-                    max = String.format(Locale.getDefault(), "%.0f°", day.getMaxtempC());
+                    max = String.format(Locale.getDefault(), "%.0f°", day.getMaxtempC());//lay nhiet do cao nhat
                 }
                 if (day != null) {
                     if (day.getCondition() != null) {
-                        iconCode = day.getCondition().getIcon();
-                        condition = day.getCondition().getText();
+                        iconCode = day.getCondition().getIcon();//lay icon thoi tiet
+                        condition = day.getCondition().getText();//lay du bao thoi tiet
                     }
                 }
                 if(day.getDailyChanceOfRain() != null){
-                    rainChance = "💧 " + day.getDailyChanceOfRain() + "%";
+                    rainChance = "💧 " + day.getDailyChanceOfRain() + "%";//lay phân tram mua
                 }
                 if(day.getAvgtempC() != null){
-                    feelsLike = String.format(Locale.getDefault(),"Cảm giác "+ "%.0f°", day.getAvgtempC());
+                    feelsLike = String.format(Locale.getDefault(),"Cảm giác "+ "%.0f°", day.getAvgtempC());//lay nhiet do cam nhan
+                }
+                if(day.getAvghumidity() != null){
+                    humidity = "💦 " + String.format(Locale.getDefault(),"%.0f%%", day.getAvghumidity());//lay do am khong khi
+                }
+                if(day.getMaxwindKph() != null){
+                    wind = "🌬️ " + String.format(Locale.getDefault(),"%.0f km/h", day.getMaxwindKph());//lay toc do gio
+                }
+                if(day.getUv() != null){
+                    uv = "☀ UV " + String.format(Locale.getDefault(),"%.0f", day.getUv());//lay tia uv
                 }
             }
-            rows.add(new DailyForecastAdapter.Slot(date, min + " / " + max, condition, iconCode, rainChance, feelsLike)
+            rows.add(new DailyForecastAdapter.Slot(date, min + " / " + max, condition, iconCode, rainChance, feelsLike, wind, humidity, uv)
             );
         }
         adapter.setRows(rows);

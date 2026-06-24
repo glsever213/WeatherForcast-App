@@ -23,13 +23,7 @@
             android:textSize="18sp"
             android:textStyle="bold" />
 
-        <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:alpha="0.9"
-            android:contentDescription="@null"
-            android:src="@android:drawable/ic_menu_my_calendar"
-            app:tint="@color/text_primary_on_dark" />
+
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
@@ -44,13 +38,13 @@
         android:scrollbars="vertical"
         tools:listitem="@layout/item_daily_forecast_line" />
 
-    <TextView
-        android:id="@+id/textForecast5dFooterNote"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="4dp"
-        android:text="@string/slot_forecast_footer_note"
-        android:textColor="@color/text_secondary_on_dark"
-        android:textSize="11sp" />
+<!--    <TextView-->
+<!--        android:id="@+id/textForecast5dFooterNote"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginTop="4dp"-->
+<!--        android:layout_marginBottom="4dp"-->
+<!--        android:text="@string/slot_forecast_footer_note"-->
+<!--        android:textColor="@color/text_secondary_on_dark"-->
+<!--        android:textSize="11sp" />-->
 </LinearLayout>

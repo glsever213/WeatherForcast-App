@@ -11,6 +11,7 @@
     <color name="weather_type4">#FFFFFF</color>
 
     <color name="screen_bg_black">#000000</color>
+    <color name="bg_3_days">#202123</color>
     <color name="search_bar_bg">#2C2C2C</color>
     <color name="text_primary_on_dark">#FFFFFF</color>
     <color name="text_secondary_on_dark">#B0B0B0</color>

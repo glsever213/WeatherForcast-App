@@ -23,14 +23,20 @@ public final class DailyForecastAdapter extends RecyclerView.Adapter<DailyForeca
         public final String iconCode;
         public final String rainChance;
         public final String feelsLike;
+        public final String wind;
+        public final String humidity;
+        public final String uv;
 
-        public Slot(String dateLabel, String tempLabel, String condition, String iconCode, String rainChance, String feelsLike) {
+        public Slot(String dateLabel, String tempLabel, String condition, String iconCode, String rainChance, String feelsLike, String wind, String humidity, String uv) {
             this.dateLabel = dateLabel;
             this.tempLabel = tempLabel;
             this.condition = condition;
             this.iconCode = iconCode;
             this.rainChance = rainChance;
             this.feelsLike = feelsLike;
+            this.wind = wind;
+            this.humidity = humidity;
+            this.uv = uv;
         }
     }
 
@@ -61,6 +67,9 @@ public final class DailyForecastAdapter extends RecyclerView.Adapter<DailyForeca
         holder.binding.textIconNote.setText(s.condition);
         holder.binding.textRainChance.setText(s.rainChance);
         holder.binding.textFeelsLike.setText(s.feelsLike);
+        holder.binding.textWind.setText(s.wind);
+        holder.binding.textHumidity.setText(s.humidity);
+        holder.binding.textUv.setText(s.uv);
     }
 
     @Override
