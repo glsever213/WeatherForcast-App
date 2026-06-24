@@ -12,7 +12,9 @@ import com.example.weatherforcastapp.model.SavedLocation;
 import com.example.weatherforcastapp.prefs.WeatherPreferences;
 import com.example.weatherforcastapp.ui.SavedLocationsAdapter;
 import com.example.weatherforcastapp.util.ActivityTransitions;
+import com.example.weatherforcastapp.data.WeatherRepository;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -23,6 +25,7 @@ public class LocationManagementActivity extends AppCompatActivity implements Sav
     private ActivityLocationManagementBinding binding;
     private WeatherPreferences prefs;
     private SavedLocationsAdapter adapter;
+    private final WeatherRepository weatherRepo = new WeatherRepository();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -76,7 +79,13 @@ public class LocationManagementActivity extends AppCompatActivity implements Sav
     }
 
     private void refreshList() {
-        adapter.setItems(prefs.getSavedLocations());
+        List<SavedLocation> locations = prefs.getSavedLocations();
+        adapter.setItems(locations);
+        for (SavedLocation loc : locations) {
+            weatherRepo.updateWeatherForLocation(loc, prefs, updated -> {
+                runOnUiThread(() -> adapter.notifyDataSetChanged());
+            });
+        }
     }
 
     @Override

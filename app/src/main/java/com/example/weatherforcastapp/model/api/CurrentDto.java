@@ -15,6 +15,9 @@ public final class CurrentDto {
     @SerializedName("is_day")
     private Integer isDay;
 
+    @SerializedName("humidity")
+    private Integer humidity;
+
     public Double getTempC() {
         return tempC;
     }
@@ -25,6 +28,10 @@ public final class CurrentDto {
 
     public Integer getIsDay() {
         return isDay;
+    }
+
+    public Integer getHumidity() {
+        return humidity;
     }
 
     public boolean isDaytime() {

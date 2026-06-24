@@ -5,10 +5,17 @@ import androidx.annotation.Nullable;
 
 import com.example.weatherforcastapp.api.WeatherApiClient;
 import com.example.weatherforcastapp.api.WeatherApiQuery;
+import com.example.weatherforcastapp.model.SavedLocation;
+import com.example.weatherforcastapp.model.api.ApiForecastDayDto;
+import com.example.weatherforcastapp.model.api.ConditionDto;
+import com.example.weatherforcastapp.model.api.CurrentDto;
+import com.example.weatherforcastapp.model.api.DayAggregateDto;
 import com.example.weatherforcastapp.model.api.ForecastResponse;
 import com.example.weatherforcastapp.prefs.WeatherPreferences;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
+
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -26,6 +33,10 @@ public final class WeatherRepository {
         void onFailure(@Nullable String message);
     }
 
+    public interface LocationUpdateListener {
+        void onUpdated(@NonNull SavedLocation location);
+    }
+
     private final Gson gson = new Gson();
     private Call<ForecastResponse> pendingForecast;
 
@@ -34,6 +45,48 @@ public final class WeatherRepository {
             pendingForecast.cancel();
             pendingForecast = null;
         }
+    }
+
+    public void updateWeatherForLocation(
+            @NonNull SavedLocation loc,
+            @NonNull WeatherPreferences prefs,
+            @Nullable LocationUpdateListener listener
+    ) {
+        String q = WeatherApiQuery.latLon(loc.getLatitude(), loc.getLongitude());
+        WeatherApiClient.api().getForecast(q, 1, "vi").enqueue(new Callback<ForecastResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<ForecastResponse> call, @NonNull Response<ForecastResponse> response) {
+                ForecastResponse body = response.body();
+                if (response.isSuccessful() && body != null && body.getCurrent() != null) {
+                    CurrentDto cur = body.getCurrent();
+                    loc.setCachedTemp(String.format(Locale.getDefault(), "%.0f°", cur.getTempC()));
+                    loc.setCachedHumidity(String.format(Locale.getDefault(), "%d%%", cur.getHumidity()));
+                    
+                    ConditionDto cond = cur.getCondition();
+                    if (cond != null) {
+                        loc.setCachedSummaryLine(cond.getText());
+                        loc.setCachedIconCode(cond.getIcon());
+                    }
+
+                    if (body.getForecast() != null && body.getForecast().getForecastday() != null && !body.getForecast().getForecastday().isEmpty()) {
+                        ApiForecastDayDto firstDay = body.getForecast().getForecastday().get(0);
+                        DayAggregateDto day = firstDay.getDay();
+                        if (day != null) {
+                            loc.setCachedHighLow(String.format(Locale.getDefault(), "%.0f° / %.0f°", 
+                                    day.getMaxtempC(), day.getMintempC()));
+                        }
+                    }
+                    
+                    prefs.addOrUpdateLocation(loc);
+                    if (listener != null) listener.onUpdated(loc);
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ForecastResponse> call, @NonNull Throwable t) {
+                // ignore
+            }
+        });
     }
 
     /**
