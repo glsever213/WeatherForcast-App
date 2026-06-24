@@ -1,57 +1,131 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- 3 cột phân đều: ngày | icon + ghi chú | nhiệt độ (ảnh 1 / Next Forecast). -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:baselineAligned="false"
-    android:gravity="center_vertical"
-    android:orientation="horizontal"
-    android:paddingVertical="14dp">
-
-    <TextView
-        android:id="@+id/textDailyDate"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:gravity="start|center_vertical"
-        android:textColor="@color/text_primary_on_dark"
-        android:textSize="15sp"
-        tools:text="13/9" />
+    android:layout_margin="8dp"
+    app:cardBackgroundColor="@color/bg_3_days"
+    app:cardCornerRadius="20dp"
+    app:cardElevation="4dp">
 
     <LinearLayout
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="16dp">
 
-        <ImageView
-            android:id="@+id/iconDaily"
-            android:layout_width="44dp"
-            android:layout_height="44dp"
-            android:contentDescription="@null"
-            tools:src="@drawable/ic_weather_placeholder" />
-
+        <!-- Ngày -->
         <TextView
-            android:id="@+id/textIconNote"
+            android:id="@+id/textDailyDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_primary_on_dark"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            tools:text="2026-03-28"/>
+
+        <!-- Tầng 1 -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:maxLines="3"
-            android:text="@string/slot_openweather_icon_line"
+            android:layout_marginTop="12dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/iconDaily"
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                tools:src="@drawable/ic_weather_placeholder"/>
+
+            <TextView
+                android:id="@+id/textIconNote"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="10dp"
+                android:layout_weight="1"
+                android:textColor="@color/text_primary_on_dark"
+                android:textSize="16sp"
+                tools:text="Mưa lác đác gần đây"/>
+
+            <TextView
+                android:id="@+id/textDailyTemp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_primary_on_dark"
+                android:layout_marginStart="10dp"
+                android:textSize="30sp"
+                android:textStyle="bold"
+                tools:text="25° / 30°"/>
+
+        </LinearLayout>
+
+        <!-- Feels Like -->
+        <TextView
+            android:id="@+id/textFeelsLike"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             android:textColor="@color/text_secondary_on_dark"
-            android:textSize="9sp" />
+            android:textSize="14sp"
+            tools:text="Feels like 28°"/>
+
+        <!-- Tầng 2 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:orientation="horizontal"
+            android:weightSum="2">
+
+                <TextView
+                    android:id="@+id/textRainChance"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:textColor="@color/text_primary_on_dark"
+                    android:textSize="14sp"
+                    tools:text="🌧 80%"/>
+                <Space
+                    android:layout_width="20dp"
+                    android:layout_height="match_parent"/>
+                <TextView
+                    android:id="@+id/textWind"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:textColor="@color/text_primary_on_dark"
+                    android:textSize="14sp"
+                    tools:text="🌬 12km/h"/>
+            <Space
+                android:layout_width="20dp"
+                android:layout_height="match_parent"/>
+                <TextView
+                    android:id="@+id/textHumidity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:textColor="@color/text_primary_on_dark"
+                    android:textSize="14sp"
+                    tools:text="💧 68%"/>
+            <Space
+                android:layout_width="20dp"
+                android:layout_height="match_parent"/>
+                <TextView
+                    android:id="@+id/textUv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:textColor="@color/text_primary_on_dark"
+                    android:textSize="14sp"
+                    tools:text="☀ UV 7"/>
+
+        </LinearLayout>
+
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/textDailyTemp"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:gravity="end|center_vertical"
-        android:textColor="@color/text_primary_on_dark"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        tools:text="34°" />
-</LinearLayout>
+</com.google.android.material.card.MaterialCardView>

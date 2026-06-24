@@ -70,7 +70,7 @@ public final class WeatherRepository {
         }
 
         String q = WeatherApiQuery.latLon(lat, lon);
-        pendingForecast = WeatherApiClient.api().getForecast(q, 3, lang);
+        pendingForecast = WeatherApiClient.api().getForecast(q, 3, "yes", lang);
         pendingForecast.enqueue(new Callback<ForecastResponse>() {
             @Override
             public void onResponse(@NonNull Call<ForecastResponse> call, @NonNull Response<ForecastResponse> response) {
@@ -78,6 +78,7 @@ public final class WeatherRepository {
                     return;
                 }
                 ForecastResponse body = response.body();
+
                 if (response.isSuccessful() && body != null && body.getCurrent() != null) {
                     prefs.markApiCalled(key);
                     prefs.putApiResponseCache(key, gson.toJson(body));

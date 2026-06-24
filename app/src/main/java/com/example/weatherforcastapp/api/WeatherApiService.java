@@ -30,6 +30,7 @@ public interface WeatherApiService {
     Call<ForecastResponse> getForecast(
             @Query("q") String query,
             @Query("days") int days,
+            @Query("aqi") String aqi,
             @Query("lang") String lang
     );
 }

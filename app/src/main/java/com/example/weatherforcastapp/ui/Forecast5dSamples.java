@@ -15,11 +15,11 @@ public final class Forecast5dSamples {
 
     public static List<DailyForecastAdapter.Slot> defaultSlots() {
         List<DailyForecastAdapter.Slot> daily = new ArrayList<>();
-        daily.add(new DailyForecastAdapter.Slot("13/9", "21°", "389"));
-        daily.add(new DailyForecastAdapter.Slot("14/9", "34°", "113"));
-        daily.add(new DailyForecastAdapter.Slot("15/9", "30°", "119"));
-        daily.add(new DailyForecastAdapter.Slot("16/9", "28°", "122"));
-        daily.add(new DailyForecastAdapter.Slot("17/9", "27°", "116"));
+        daily.add(new DailyForecastAdapter.Slot("13/9", "21°", "Mưa giông", "389", "80%", "21°", "12", "68","8"));
+        daily.add(new DailyForecastAdapter.Slot("14/9", "34°", "Nắng", "113", "80%", "21°", "12", "68", "8"));
+        daily.add(new DailyForecastAdapter.Slot("15/9", "30°", "Nhiều mây", "119", "80%","21°", "12", "68", "8"));
+        daily.add(new DailyForecastAdapter.Slot("16/9", "28°", "Âm u", "122", "80%", "21°", "12", "68", "8"));
+        daily.add(new DailyForecastAdapter.Slot("17/9", "27°", "Mưa nhẹ", "116", "80%", "21°", "12", "68", "8"));
         return daily;
     }
 }

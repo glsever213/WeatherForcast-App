@@ -62,7 +62,7 @@ public final class ChartSamples {
         set.setValueTextColor(Color.DKGRAY);
         set.setMode(LineDataSet.Mode.CUBIC_BEZIER);
 
-        chart.setData(new LineData(set));
+        //chart.setData(new LineData(set));
         chart.invalidate();
     }
 

@@ -13,11 +13,21 @@ public final class DayAggregateDto {
 
     @SerializedName("condition")
     private ConditionDto condition;
+    @SerializedName("daily_chance_of_rain")
+    private Integer dailyChanceOfRain;
+    @SerializedName("avgtemp_c")
+    private Double avgtempC;
+    @SerializedName("maxwind_kph")
+    private Double maxwindKph;
 
-    public Double getMaxtempC() {
-        return maxtempC;
-    }
+    @SerializedName("avghumidity")
+    private Double avgHumidity;
 
+    @SerializedName("uv")
+    private Double uv;
+    public Double getAvgtempC() { return avgtempC; }
+    public Integer getDailyChanceOfRain() { return dailyChanceOfRain; }
+    public Double getMaxtempC() {return maxtempC;}
     public Double getMintempC() {
         return mintempC;
     }
@@ -25,4 +35,8 @@ public final class DayAggregateDto {
     public ConditionDto getCondition() {
         return condition;
     }
+    public Double getMaxwindKph() { return maxwindKph; }
+    public Double getAvghumidity() { return avgHumidity; }
+    public Double getUv() { return uv; }
+
 }

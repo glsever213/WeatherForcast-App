@@ -21,12 +21,12 @@
     <string name="locate_chip">Định vị</string>
 
     <string name="manage_cities_title">Quản lý thành phố</string>
-    <string name="forecast_5d">Dự báo 5 ngày</string>
+    <string name="forecast_5d">Dự báo 3 ngày</string>
     <string name="forecast_5d_screen_title">Dự báo tiếp theo</string>
     <string name="forecast_today_section">Hôm nay</string>
     <string name="forecast_today_date_placeholder">28/3, 2026</string>
-    <string name="forecast_next_section">Dự báo 5 ngày</string>
-    <string name="forecast_5d_detail_cta">Xem chi tiết dự báo 5 ngày</string>
+    <string name="forecast_next_section">Dự báo 3 ngày</string>
+    <string name="forecast_5d_detail_cta">Xem chi tiết dự báo 3 ngày</string>
     <string name="more_detail">Thêm chi tiết</string>
     <string name="forecast_24h">Dự báo 24 giờ</string>
     <string name="add_to_home">Thêm vào trang home</string>
@@ -41,12 +41,12 @@
 
     <string name="slot_hero_note">Vùng ghi chú dưới hero (team xóa khi có dữ liệu thật)</string>
     <string name="slot_chart_note">Vùng mô tả dưới biểu đồ 24h</string>
-    <string name="slot_metric_1">Ô 1 — hiển thị chỉ số tia UV (team đặt tên + đơn vị)</string>
-    <string name="slot_metric_2">Ô 2 — hiển thị độ ẩm không khí</string>
-    <string name="slot_metric_3">Ô 3 — nhiệt độ cảm nhận</string>
-    <string name="slot_metric_4">Ô 4 — hướng / tốc độ gió</string>
-    <string name="slot_metric_5">Ô 5 — mặt trời mọc / lặn</string>
-    <string name="slot_metric_6">Ô 6 — áp suất khí quyển</string>
+    <string name="slot_metric_1">Chỉ số tia UV </string>
+    <string name="slot_metric_2">Độ ẩm không khí</string>
+    <string name="slot_metric_3">Nhiệt độ cảm nhận</string>
+    <string name="slot_metric_4">Hướng / Tốc độ gió</string>
+    <string name="slot_metric_5">Mặt trời mọc / lặn</string>
+    <string name="slot_metric_6">Áp suất khí quyển</string>
 
     <string name="delete_selected">Xóa đã chọn</string>
     <string name="delete_all">Xóa tất cả</string>
@@ -58,4 +58,7 @@
 
     <string name="forecast_row_tomorrow">Ngày mai</string>
     <string name="weather_load_failed">Không tải được dữ liệu thời tiết. Kiểm tra mạng hoặc API key.</string>
+
+    <string name="ai_message">Xin chào,\nHôm nay tôi có thể giúp gì cho bạn?</string>
+    <string name="ai_askinput">Hỏi gì đó</string>
 </resources>

@@ -1,0 +1,33 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="30dp"
+    android:height="30dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <!-- Bong bóng chat phía trước -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1.8"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M6,3
+                          H15
+                          C17.2,3 19,4.8 19,7
+                          V11
+                          C19,13.2 17.2,15 15,15
+                          H8.2
+                          L3,19
+                          V7
+                          C3,4.8 4.8,3 7,3
+                          Z" />
+
+    <!-- Hai dòng text -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M7,7.2H14.5A0.8,0.8 0 0 1 15.3,8A0.8,0.8 0 0 1 14.5,8.8H7A0.8,0.8 0 0 1 6.2,8A0.8,0.8 0 0 1 7,7.2Z"/>
+
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M7,10.5H11.5A0.8,0.8 0 0 1 12.3,11.3A0.8,0.8 0 0 1 11.5,12.1H7A0.8,0.8 0 0 1 6.2,11.3A0.8,0.8 0 0 1 7,10.5Z"/>
+</vector>
