@@ -3,7 +3,8 @@ package com.example.weatherforcastapp.search;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.example.weatherforcastapp.api.WeatherApiClient;
+import com.example.weatherforcastapp.api.OpenMeteoClient;
+import com.example.weatherforcastapp.model.api.OpenMeteoResponse;
 import com.example.weatherforcastapp.model.api.LocationDto;
 
 import java.util.List;
@@ -21,7 +22,7 @@ public final class GeocodingRepository {
         void onFailure(@Nullable String message);
     }
 
-    private Call<List<LocationDto>> pendingSearch;
+    private Call<OpenMeteoResponse> pendingSearch;
 
     public void cancel() {
         if (pendingSearch != null) {
@@ -32,23 +33,27 @@ public final class GeocodingRepository {
 
     public void search(@NonNull String query, @NonNull Listener listener) {
         cancel();
-        pendingSearch = WeatherApiClient.api().search(query);
-        pendingSearch.enqueue(new Callback<List<LocationDto>>() {
+        pendingSearch = OpenMeteoClient.api().searchLocation(query, 5);
+        pendingSearch.enqueue(new Callback<OpenMeteoResponse>() {
             @Override
-            public void onResponse(@NonNull Call<List<LocationDto>> call, @NonNull Response<List<LocationDto>> response) {
+            public void onResponse(@NonNull Call<OpenMeteoResponse> call, @NonNull Response<OpenMeteoResponse> response) {
                 if (call.isCanceled()) {
                     return;
                 }
-                List<LocationDto> body = response.body();
-                if (response.isSuccessful() && body != null) {
-                    listener.onSuccess(body);
+                OpenMeteoResponse body = response.body();
+                if (response.isSuccessful() && body != null && body.getResults() != null) {
+                    java.util.List<LocationDto> mapped = new java.util.ArrayList<>();
+                    for (OpenMeteoResponse.Result r : body.getResults()) {
+                        mapped.add(new LocationDto(r.getName(), r.getCountry(), r.getLatitude(), r.getLongitude()));
+                    }
+                    listener.onSuccess(mapped);
                 } else {
                     listener.onFailure(response.message());
                 }
             }
 
             @Override
-            public void onFailure(@NonNull Call<List<LocationDto>> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<OpenMeteoResponse> call, @NonNull Throwable t) {
                 if (call.isCanceled()) {
                     return;
                 }
