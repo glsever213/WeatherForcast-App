@@ -143,6 +143,9 @@ public class SearchActivity extends AppCompatActivity {
         );
 
         binding.recyclerCityList.setAdapter(popularCityAdapter);
+        binding.recyclerSearchResults.setLayoutManager(new LinearLayoutManager(this));
+        binding.recyclerSearchResults.setAdapter(searchResultAdapter);
+
         showingSearchResults = false;
     }
 
@@ -150,14 +153,20 @@ public class SearchActivity extends AppCompatActivity {
         if (!showingSearchResults) {
             return;
         }
+        binding.recyclerCityList.setVisibility(android.view.View.VISIBLE);
         binding.recyclerCityList.setLayoutManager(new GridLayoutManager(this, 3));
         binding.recyclerCityList.setAdapter(popularCityAdapter);
+        binding.chipLocate.setVisibility(android.view.View.VISIBLE);
+        binding.recyclerSearchResults.setVisibility(android.view.View.GONE);
         showingSearchResults = false;
     }
 
     private void showSearchResults(@NonNull List<LocationDto> results, @NonNull String query) {
-        binding.recyclerCityList.setLayoutManager(new LinearLayoutManager(this));
-        binding.recyclerCityList.setAdapter(searchResultAdapter);
+        binding.recyclerCityList.setVisibility(android.view.View.GONE);
+        binding.chipLocate.setVisibility(android.view.View.GONE);
+        binding.recyclerSearchResults.setVisibility(android.view.View.VISIBLE);
+        binding.recyclerSearchResults.setLayoutManager(new LinearLayoutManager(this));
+        binding.recyclerSearchResults.setAdapter(searchResultAdapter);
         searchResultAdapter.submitList(results);
         showingSearchResults = true;
 
@@ -169,8 +178,11 @@ public class SearchActivity extends AppCompatActivity {
 
     private void showNoResults(@NonNull String query) {
         searchResultAdapter.clear();
-        binding.recyclerCityList.setLayoutManager(new LinearLayoutManager(this));
-        binding.recyclerCityList.setAdapter(searchResultAdapter);
+        binding.recyclerCityList.setVisibility(android.view.View.GONE);
+        binding.chipLocate.setVisibility(android.view.View.GONE);
+        binding.recyclerSearchResults.setVisibility(android.view.View.VISIBLE);
+        binding.recyclerSearchResults.setLayoutManager(new LinearLayoutManager(this));
+        binding.recyclerSearchResults.setAdapter(searchResultAdapter);
         showingSearchResults = true;
 
         binding.textSearchState.setText(
