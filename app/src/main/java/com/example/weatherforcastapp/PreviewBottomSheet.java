@@ -42,11 +42,17 @@ public class PreviewBottomSheet extends BottomSheetDialogFragment {
     private static final String ARG_LAT      = "lat";
     private static final String ARG_LON      = "lon";
     private static final String ARG_FLOW     = "flow";
+    private static final String ARG_FROM_GPS = "from_gps";
 
     private FragmentPreviewBottomSheetBinding binding;
     private final WeatherRepository weatherRepo = new WeatherRepository();
 
     public static void show(@NonNull FragmentManager fm, @NonNull String name, double lat, double lon, int flowMode) {
+        show(fm, name, lat, lon, flowMode, false);
+    }
+
+    public static void show(@NonNull FragmentManager fm, @NonNull String name, double lat, double lon,
+                            int flowMode, boolean fromGps) {
         if (fm.findFragmentByTag(TAG) != null) return;
 
         Bundle args = new Bundle();
@@ -54,6 +60,7 @@ public class PreviewBottomSheet extends BottomSheetDialogFragment {
         args.putDouble(ARG_LAT, lat);
         args.putDouble(ARG_LON, lon);
         args.putInt(ARG_FLOW, flowMode);
+        args.putBoolean(ARG_FROM_GPS, fromGps);
 
         PreviewBottomSheet sheet = new PreviewBottomSheet();
         sheet.setArguments(args);
@@ -76,6 +83,7 @@ public class PreviewBottomSheet extends BottomSheetDialogFragment {
         double lat = args.getDouble(ARG_LAT);
         double lon = args.getDouble(ARG_LON);
         int flowMode = args.getInt(ARG_FLOW, LocationContract.FLOW_MANAGEMENT);
+        boolean fromGps = args.getBoolean(ARG_FROM_GPS, false);
 
         binding.textPreviewCity.setText(cityName);
         binding.layoutPreviewHero.setVisibility(View.INVISIBLE);
@@ -86,7 +94,7 @@ public class PreviewBottomSheet extends BottomSheetDialogFragment {
         applyFabSavedState(lat, lon);
 
         binding.fabViewDetail.setOnClickListener(v ->
-                onFabClicked(cityName, lat, lon, flowMode));
+                onFabClicked(cityName, lat, lon, flowMode, fromGps));
 
         loadWeatherData(lat, lon);
     }
@@ -99,13 +107,8 @@ public class PreviewBottomSheet extends BottomSheetDialogFragment {
     }
 
     private void applyFabSavedState(double lat, double lon) {
-        WeatherPreferences prefs = WeatherPreferences.get(requireContext());
-        String targetId = SavedLocation.buildId(lat, lon);
-        for (SavedLocation s : prefs.getSavedLocations()) {
-            if (s.getId().equals(targetId)) {
-                markFabAsSaved();
-                return;
-            }
+        if (WeatherPreferences.get(requireContext()).hasSavedLocationWithCoords(lat, lon)) {
+            markFabAsSaved();
         }
     }
 
@@ -117,8 +120,7 @@ public class PreviewBottomSheet extends BottomSheetDialogFragment {
 
     private void loadWeatherData(double lat, double lon) {
         showLoading(true);
-        WeatherPreferences prefs = WeatherPreferences.get(requireContext());
-        weatherRepo.fetchForecastForHome(lat, lon, prefs, true, "vi",
+        weatherRepo.fetchForecastForHome(lat, lon, "vi",
                 new WeatherRepository.HomeForecastListener() {
                     @Override
                     public void onSuccess(@NonNull ForecastResponse body) {
@@ -188,27 +190,40 @@ public class PreviewBottomSheet extends BottomSheetDialogFragment {
         binding.progressPreview.setVisibility(loading ? View.VISIBLE : View.GONE);
     }
 
-    private void onFabClicked(String cityName, double lat, double lon, int flowMode) {
+    private void onFabClicked(String cityName, double lat, double lon, int flowMode, boolean fromGps) {
         WeatherPreferences prefs = WeatherPreferences.get(requireContext());
         SavedLocation loc = new SavedLocation(cityName, lat, lon, getString(R.string.frame_note));
+        if (fromGps) {
+            loc.setFromGps(true);
+        }
 
-        // Luồng onboarding (lần đầu mở app, chưa có vị trí): thêm xong phải mở thẳng Home.
         if (flowMode == LocationContract.FLOW_ONBOARDING) {
-            prefs.setCurrentLocation(lat, lon, cityName);
+            prefs.setCurrentLocation(lat, lon, cityName, fromGps);
             prefs.addOrUpdateLocation(loc);
+            if (fromGps) {
+                prefs.markGpsLocation(lat, lon);
+            }
             dismiss();
             HomeActivity.startClearTask(requireContext(), lat, lon, cityName);
             requireActivity().finishAffinity();
             return;
         }
 
+        boolean alreadySaved = prefs.hasSavedLocationWithCoords(lat, lon);
         boolean added = prefs.addOrUpdateLocation(loc);
         if (!added) {
             Toast.makeText(requireContext(), R.string.max_locations_reached, Toast.LENGTH_SHORT).show();
             return;
         }
+        if (fromGps) {
+            prefs.markGpsLocation(lat, lon);
+        }
 
-        Toast.makeText(requireContext(), R.string.location_added, Toast.LENGTH_SHORT).show();
+        Toast.makeText(
+                requireContext(),
+                alreadySaved ? R.string.location_already_saved : R.string.location_added,
+                Toast.LENGTH_SHORT
+        ).show();
         dismiss();
         // Thêm xong → quay lại danh sách vị trí đã thêm (đóng màn Search đang host preview).
         androidx.fragment.app.FragmentActivity host = requireActivity();

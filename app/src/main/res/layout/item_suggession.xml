@@ -13,5 +13,5 @@
         android:background="@drawable/rounded_box"
         android:textAppearance="@style/TextAppearance.Weather.Body"
         android:text="Hom nay ban cam thay the nao?"
-        android:textColor="#1E3C72"/>
+        android:textColor="@color/text_primary_on_dark"/>
 </LinearLayout>

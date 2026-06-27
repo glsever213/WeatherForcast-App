@@ -55,7 +55,7 @@ public final class WeatherChatRepository {
     }
 
     /**
-     * @param weatherContext kết quả của {@link WeatherContextBuilder#build}
+     * @param weatherContext kết quả của {@link WeatherContextBuilder#build(ForecastResponse, String)}
      * @param history        lịch sử hội thoại (user/assistant) KHÔNG gồm system
      * @param userMessage    câu hỏi mới của người dùng
      */

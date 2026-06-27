@@ -11,6 +11,7 @@ import com.example.weatherforcastapp.model.api.ForecastResponse;
 import com.example.weatherforcastapp.model.api.HourItemDto;
 import com.example.weatherforcastapp.model.api.LocationDto;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -27,21 +28,34 @@ public final class WeatherContextBuilder {
     }
 
     @NonNull
-    public static String build(@Nullable ForecastResponse r) {
+    public static String build(@Nullable ForecastResponse r, @Nullable String homeName) {
         if (r == null || r.getCurrent() == null) {
+            if (homeName != null && !homeName.isEmpty()) {
+                return "Chưa có dữ liệu thời tiết. Địa điểm: " + homeName;
+            }
             return "Hiện chưa có dữ liệu thời tiết được tải.";
         }
 
         StringBuilder sb = new StringBuilder();
         sb.append("DỮ LIỆU THỜI TIẾT HIỆN TẠI (nguồn: WeatherAPI, đã tải trên màn hình chính)\n");
 
+        if (homeName != null && !homeName.isEmpty()) {
+            sb.append("- Địa điểm: ").append(homeName)
+                    .append(" (tên trên Home — luôn dùng tên này khi trả lời)\n");
+        } else {
+            LocationDto loc = r.getLocation();
+            if (loc != null) {
+                sb.append("- Địa điểm: ").append(safe(loc.getName()));
+                if (notEmpty(loc.getRegion())) sb.append(", ").append(loc.getRegion());
+                if (notEmpty(loc.getCountry())) sb.append(", ").append(loc.getCountry());
+                sb.append(String.format(Locale.US, " (lat %.4f, lon %.4f)", loc.getLat(), loc.getLon()));
+                sb.append('\n');
+            }
+        }
+
         LocationDto loc = r.getLocation();
-        if (loc != null) {
-            sb.append("- Địa điểm: ").append(safe(loc.getName()));
-            if (notEmpty(loc.getRegion())) sb.append(", ").append(loc.getRegion());
-            if (notEmpty(loc.getCountry())) sb.append(", ").append(loc.getCountry());
-            sb.append(String.format(Locale.US, " (lat %.4f, lon %.4f)", loc.getLat(), loc.getLon()));
-            sb.append('\n');
+        if (loc != null && notEmpty(loc.getLocaltime())) {
+            sb.append("- Giờ địa phương hiện tại: ").append(loc.getLocaltime()).append('\n');
         }
 
         CurrentDto cur = r.getCurrent();
@@ -84,25 +98,68 @@ public final class WeatherContextBuilder {
                     sb.append('\n');
                 }
 
-                ApiForecastDayDto today = days.get(0);
-                if (today != null && today.getHour() != null && !today.getHour().isEmpty()) {
-                    sb.append("\nNHIỆT ĐỘ THEO GIỜ (hôm nay, mỗi 3 giờ):\n");
-                    List<HourItemDto> hours = today.getHour();
-                    for (int i = 0; i < hours.size(); i += 3) {
-                        HourItemDto h = hours.get(i);
-                        if (h == null) continue;
-                        sb.append("  ").append(shortHour(h.getTime())).append(": ")
-                                .append(fmt(h.getTempC())).append("°C");
-                        if (h.getCondition() != null && notEmpty(h.getCondition().getText())) {
-                            sb.append(" - ").append(h.getCondition().getText());
-                        }
-                        sb.append('\n');
-                    }
-                }
+                appendHourly24h(sb, days, loc != null ? loc.getLocaltime() : null);
             }
         }
 
         return sb.toString();
+    }
+
+    private static void appendHourly24h(
+            @NonNull StringBuilder sb,
+            @NonNull List<ApiForecastDayDto> days,
+            @Nullable String localtime
+    ) {
+        List<HourItemDto> hours = new ArrayList<>();
+        for (ApiForecastDayDto d : days) {
+            if (d != null && d.getHour() != null) {
+                hours.addAll(d.getHour());
+            }
+        }
+        if (hours.isEmpty()) {
+            return;
+        }
+
+        sb.append("\nDỰ BÁO THEO GIỜ (24 giờ tới, dùng khi hỏi giờ này / lúc này / có nên đi):\n");
+        int start = hourIndexFromNow(hours, localtime);
+        for (int i = start, n = 0; i < hours.size() && n < 24; i++, n++) {
+            HourItemDto h = hours.get(i);
+            if (h == null) {
+                continue;
+            }
+            sb.append("  ").append(shortHour(h.getTime())).append(": ")
+                    .append(fmt(h.getTempC())).append("°C");
+            if (h.getCondition() != null && notEmpty(h.getCondition().getText())) {
+                sb.append(", ").append(h.getCondition().getText());
+            }
+            if (h.getChanceOfRain() != null && h.getChanceOfRain() > 0) {
+                sb.append(", mưa ").append(h.getChanceOfRain()).append('%');
+            }
+            sb.append('\n');
+        }
+    }
+
+    private static int hourIndexFromNow(@NonNull List<HourItemDto> hours, @Nullable String localtime) {
+        if (localtime != null && localtime.length() >= 13) {
+            try {
+                String target = localtime.substring(0, 10) + " "
+                        + String.format(Locale.US, "%02d:00", Integer.parseInt(localtime.substring(11, 13)));
+                for (int i = 0; i < hours.size(); i++) {
+                    String t = hours.get(i).getTime();
+                    if (target.equals(t)) {
+                        return i;
+                    }
+                }
+                for (int i = 0; i < hours.size(); i++) {
+                    String t = hours.get(i).getTime();
+                    if (t != null && t.compareTo(target) >= 0) {
+                        return i;
+                    }
+                }
+            } catch (NumberFormatException ignored) {
+            }
+        }
+        return 0;
     }
 
     private static void appendIfTemp(StringBuilder sb, String label, @Nullable Double v) {

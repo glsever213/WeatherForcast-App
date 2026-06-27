@@ -37,6 +37,11 @@ public final class LocationHelper {
                 || ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
     }
 
+    /** Android 12+ có thể chỉ cấp quyền vị trí gần đúng (Approximate). */
+    public static boolean hasFinePermission(@NonNull Context context) {
+        return ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+    }
+
     /** True nếu công tắc Location của hệ thống đang bật (có ít nhất một provider). */
     public static boolean isLocationEnabled(@NonNull Context context) {
         LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
@@ -94,9 +99,12 @@ public final class LocationHelper {
         mainHandler.postDelayed(timeoutRunnable, timeoutMs);
 
         try {
-            // (Lỗi 1) Dùng HIGH_ACCURACY để chủ động bật GPS lấy fix mới,
-            // tránh trường hợp BALANCED trả null khi không có wifi/cell.
-            client.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, cts.getToken())
+            // Chỉ dùng HIGH_ACCURACY khi có quyền chính xác (Precise).
+            // Nếu user chọn Approximate thì dùng BALANCED để tránh lỗi / null.
+            int priority = hasFinePermission(context)
+                    ? Priority.PRIORITY_HIGH_ACCURACY
+                    : Priority.PRIORITY_BALANCED_POWER_ACCURACY;
+            client.getCurrentLocation(priority, cts.getToken())
                     .addOnSuccessListener(location -> {
                         if (done[0]) return;
                         if (location != null) {

@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Home: Hôm nay / Ngày mai / CN — không có icon (theo ảnh 3). -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -10,50 +9,22 @@
 
     <TextView
         android:id="@+id/textDayLabel"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:textColor="@color/text_on_light"
-        android:textSize="15sp"
+        android:minWidth="88dp"
+        android:textAppearance="@style/TextAppearance.Weather.CardBody"
         android:textStyle="bold"
         tools:text="Hôm nay" />
 
     <TextView
-        android:id="@+id/textCondition"
+        android:id="@+id/textDaySummary"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1.4"
+        android:layout_marginStart="12dp"
+        android:layout_weight="1"
         android:ellipsize="end"
-        android:gravity="start"
+        android:gravity="end"
         android:maxLines="1"
-        android:textColor="@color/text_on_light"
-        android:textSize="14sp"
-        tools:text="Có mây" />
-
-    <TextView
-        android:id="@+id/textLow"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:alpha="0.7"
-        android:textColor="@color/text_on_light"
-        android:textSize="15sp"
-        tools:text="24°" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:alpha="0.7"
-        android:text=" / "
-        android:textColor="@color/text_on_light"
-        android:textSize="15sp" />
-
-    <TextView
-        android:id="@+id/textHigh"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@color/text_on_light"
-        android:textSize="15sp"
-        android:textStyle="bold"
-        tools:text="29°" />
+        android:textAppearance="@style/TextAppearance.Weather.CardBody"
+        tools:text="Mưa vừa - 29° / 24°" />
 </LinearLayout>

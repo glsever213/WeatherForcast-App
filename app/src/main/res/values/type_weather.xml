@@ -5,16 +5,46 @@
         <item name="android:fontFamily">sans-serif-medium</item>
         <item name="fontFamily">sans-serif-medium</item>
         <item name="android:letterSpacing">0</item>
+        <item name="android:textColor">@color/text_primary_on_dark</item>
     </style>
 
     <style name="TextAppearance.Weather.Body" parent="TextAppearance.Material3.BodyMedium">
         <item name="android:fontFamily">sans-serif</item>
         <item name="fontFamily">sans-serif</item>
+        <item name="android:textColor">@color/text_primary_on_dark</item>
     </style>
 
     <style name="TextAppearance.Weather.DisplayTemp" parent="TextAppearance.Material3.DisplayLarge">
         <item name="android:fontFamily">sans-serif-medium</item>
         <item name="fontFamily">sans-serif-medium</item>
-        <item name="android:letterSpacing">-0.03</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="android:textColor">@color/text_primary_on_dark</item>
+    </style>
+
+    <style name="TextAppearance.Weather.OnDarkCaption" parent="TextAppearance.Weather.Body">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/text_secondary_on_dark</item>
+    </style>
+
+    <style name="TextAppearance.Weather.CardTitle" parent="TextAppearance.Weather.Body">
+        <item name="android:textSize">17sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/text_primary_on_dark</item>
+    </style>
+
+    <style name="TextAppearance.Weather.CardBody" parent="TextAppearance.Weather.Body">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/text_primary_on_dark</item>
+    </style>
+
+    <style name="TextAppearance.Weather.MetricLabel" parent="TextAppearance.Weather.Body">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/text_muted_on_home</item>
+    </style>
+
+    <style name="TextAppearance.Weather.MetricValue" parent="TextAppearance.Weather.Body">
+        <item name="android:textSize">15sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/text_primary_on_dark</item>
     </style>
 </resources>

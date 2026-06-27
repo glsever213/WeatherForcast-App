@@ -19,21 +19,42 @@
 
     <TextView
         android:id="@+id/textCityName"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:textColor="@color/text_on_light"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@color/text_primary_on_dark"
         android:textSize="20sp"
         android:textStyle="bold"
-        app:layout_constraintEnd_toStartOf="@id/textTempBig"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintEnd_toStartOf="@id/iconGpsBadge"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toEndOf="@id/checkSelect"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Hà Nội" />
 
     <ImageView
+        android:id="@+id/iconGpsBadge"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="6dp"
+        android:layout_marginEnd="8dp"
+        android:contentDescription="@null"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_map_24"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/textCityName"
+        app:layout_constraintEnd_toStartOf="@id/textTempBig"
+        app:layout_constraintStart_toEndOf="@id/textCityName"
+        app:layout_constraintTop_toTopOf="@id/textCityName"
+        tools:visibility="visible" />
+
+    <ImageView
         android:id="@+id/iconWeather"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
         android:layout_marginTop="4dp"
         android:contentDescription="@null"
         app:layout_constraintStart_toStartOf="@id/textCityName"
@@ -45,7 +66,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:textColor="#B31A1A1A"
+        android:textColor="@color/text_muted_on_home"
         android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="@id/iconWeather"
         app:layout_constraintEnd_toStartOf="@id/textTempBig"
@@ -55,33 +76,37 @@
 
     <TextView
         android:id="@+id/textHighLow"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:textColor="#B31A1A1A"
+        android:textColor="@color/text_muted_on_home"
         android:textSize="13sp"
-        app:layout_constraintEnd_toStartOf="@id/textTempBig"
         app:layout_constraintStart_toStartOf="@id/textCityName"
         app:layout_constraintTop_toBottomOf="@id/iconWeather"
         tools:text="29° / 24°" />
 
     <TextView
         android:id="@+id/textHumidity"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
-        android:textColor="#B31A1A1A"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@color/text_muted_on_home"
         android:textSize="13sp"
         app:layout_constraintBottom_toBottomOf="@id/textHighLow"
+        app:layout_constraintEnd_toStartOf="@id/textTempBig"
         app:layout_constraintStart_toEndOf="@id/textHighLow"
         app:layout_constraintTop_toTopOf="@id/textHighLow"
-        tools:text="80%" />
+        tools:text="Độ ẩm 80%" />
 
     <TextView
         android:id="@+id/textTempBig"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/text_on_light"
+        android:layout_marginStart="4dp"
+        android:textColor="@color/text_primary_on_dark"
         android:textSize="36sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"

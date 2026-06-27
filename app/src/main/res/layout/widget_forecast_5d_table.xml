@@ -1,56 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Dùng chung: FiveDayForecast + Preview — giống design ảnh 4 (header + bảng 3 cột + ghi chú). -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <LinearLayout
+    <TextView
+        android:id="@+id/textForecast5dSectionTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/textForecast5dSectionTitle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/forecast_next_section"
-            android:textColor="@color/text_primary_on_dark"
-            android:textSize="18sp"
-            android:textStyle="bold" />
-
-        <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:alpha="0.9"
-            android:contentDescription="@null"
-            android:src="@android:drawable/ic_menu_my_calendar"
-            app:tint="@color/text_primary_on_dark" />
-    </LinearLayout>
+        android:text="@string/forecast_next_section"
+        android:textAppearance="@style/TextAppearance.Weather.CardTitle"
+        android:textSize="18sp" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerForecast5dTable"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="8dp"
-        android:layout_weight="1"
-        android:clipToPadding="false"
-        android:fadeScrollbars="false"
-        android:paddingBottom="8dp"
-        android:scrollbars="vertical"
-        tools:listitem="@layout/item_daily_forecast_line" />
-
-    <TextView
-        android:id="@+id/textForecast5dFooterNote"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="4dp"
-        android:text="@string/slot_forecast_footer_note"
-        android:textColor="@color/text_secondary_on_dark"
-        android:textSize="11sp" />
+        android:layout_marginTop="12dp"
+        android:nestedScrollingEnabled="false"
+        tools:listitem="@layout/item_daily_forecast_line" />
 </LinearLayout>

@@ -139,6 +139,19 @@ public final class WeatherConditionTheme {
             @Nullable Integer conditionCode,
             boolean isDaytime
     ) {
+        // Ưu tiên hiệu ứng theo thời tiết (mây/mưa/dông) kể cả ban đêm.
+        if (conditionCode != null) {
+            int code = conditionCode;
+            if (code >= 1241 && code <= 1282) {
+                return AnimationType.STORM;
+            }
+            if (code >= 1063 && code <= 1240) {
+                return AnimationType.RAINY;
+            }
+            if (code >= 1003 && code <= 1030 || code == 1135 || code == 1147) {
+                return AnimationType.CLOUDY;
+            }
+        }
 
         if (!isDaytime) {
             return AnimationType.NIGHT;
@@ -152,18 +165,6 @@ public final class WeatherConditionTheme {
 
         if (code == 1000) {
             return AnimationType.SUNNY;
-        }
-
-        if (code >= 1003 && code <= 1030) {
-            return AnimationType.CLOUDY;
-        }
-
-        if (code >= 1063 && code <= 1240) {
-            return AnimationType.RAINY;
-        }
-
-        if (code >= 1241 && code <= 1282) {
-            return AnimationType.STORM;
         }
 
         return AnimationType.SUNNY;

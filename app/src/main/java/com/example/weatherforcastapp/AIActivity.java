@@ -2,8 +2,6 @@ package com.example.weatherforcastapp;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -15,6 +13,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.example.weatherforcastapp.ai.ChatHistoryStore;
 import com.example.weatherforcastapp.ai.WeatherChatRepository;
 import com.example.weatherforcastapp.ai.WeatherContextBuilder;
 import com.example.weatherforcastapp.ai.model.OpenAiMessage;
@@ -67,7 +66,9 @@ public class AIActivity extends AppCompatActivity {
 
         binding.buttonBackForecast.setOnClickListener(v -> finish());
         binding.btnSend.setOnClickListener(v -> sendMessage(binding.edtInput.getText().toString()));
+        binding.buttonNewChat.setOnClickListener(v -> startNewConversation());
 
+        restoreHistoryIfValid();
         loadWeatherContext();
     }
 
@@ -78,19 +79,19 @@ public class AIActivity extends AppCompatActivity {
         double lat = prefs.getCurrentLat();
         double lon = prefs.getCurrentLon();
         if (Math.abs(lat) < 1e-5 && Math.abs(lon) < 1e-5) {
-            weatherContext = WeatherContextBuilder.build(null);
+            weatherContext = WeatherContextBuilder.build(null, prefs.getCurrentName());
             weatherReady = true;
             setWeatherLoading(false);
             return;
         }
 
-        weatherRepo.fetchForecastForHome(lat, lon, prefs, true, "vi",
+        weatherRepo.fetchForecastForHome(lat, lon, "vi",
                 new WeatherRepository.HomeForecastListener() {
                     @Override
                     public void onSuccess(@NonNull ForecastResponse body) {
                         runOnUiThread(() -> {
                             if (binding == null) return;
-                            weatherContext = WeatherContextBuilder.build(body);
+                            weatherContext = WeatherContextBuilder.build(body, prefs.getCurrentName());
                             weatherReady = true;
                             setWeatherLoading(false);
                         });
@@ -101,7 +102,7 @@ public class AIActivity extends AppCompatActivity {
                         runOnUiThread(() -> {
                             if (binding == null) return;
                             // Vẫn cho chat, nhưng báo là chưa có dữ liệu.
-                            weatherContext = WeatherContextBuilder.build(null);
+                            weatherContext = WeatherContextBuilder.build(null, prefs.getCurrentName());
                             weatherReady = true;
                             setWeatherLoading(false);
                             Toast.makeText(AIActivity.this, R.string.weather_load_failed, Toast.LENGTH_SHORT).show();
@@ -113,11 +114,14 @@ public class AIActivity extends AppCompatActivity {
     /** Đang tải dữ liệu thời tiết: hiện spinner giữa màn, ẩn lời chào/gợi ý, khoá nhập. */
     private void setWeatherLoading(boolean loading) {
         binding.loadingLayout.setVisibility(loading ? View.VISIBLE : View.GONE);
-        binding.txtMessage.setVisibility(loading ? View.GONE : View.VISIBLE);
-        binding.rvSuggestions.setVisibility(loading ? View.GONE : View.VISIBLE);
         binding.edtInput.setEnabled(!loading);
         if (loading) {
             setSendEnabled(false);
+            binding.txtMessage.setVisibility(View.GONE);
+            binding.rvSuggestions.setVisibility(View.GONE);
+        } else if (chatAdapter.isEmpty()) {
+            binding.txtMessage.setVisibility(View.VISIBLE);
+            binding.rvSuggestions.setVisibility(View.VISIBLE);
         }
     }
 
@@ -150,8 +154,6 @@ public class AIActivity extends AppCompatActivity {
 
     private void setSendEnabled(boolean enabled) {
         binding.btnSend.setEnabled(enabled);
-        binding.btnSend.setBackgroundTintList(ColorStateList.valueOf(
-                Color.parseColor(enabled ? "#1E3C72" : "#808080")));
     }
 
     private void sendMessage(@Nullable String raw) {
@@ -193,6 +195,36 @@ public class AIActivity extends AppCompatActivity {
 
     private void scrollToBottom() {
         binding.rvChat.post(() -> binding.rvChat.smoothScrollToPosition(chatAdapter.lastIndex()));
+    }
+
+    private void restoreHistoryIfValid() {
+        if (!ChatHistoryStore.hasValid(this)) return;
+        List<ChatItem> savedChat = ChatHistoryStore.loadChatItems(this);
+        List<OpenAiMessage> savedHistory = ChatHistoryStore.loadHistory(this);
+        if (savedChat == null || savedChat.isEmpty()) return;
+        chatAdapter.setAll(savedChat);
+        if (savedHistory != null) history.addAll(savedHistory);
+        binding.txtMessage.setVisibility(View.GONE);
+        binding.rvSuggestions.setVisibility(View.GONE);
+        binding.rvChat.setVisibility(View.VISIBLE);
+        binding.rvChat.post(() -> binding.rvChat.scrollToPosition(chatAdapter.lastIndex()));
+    }
+
+    private void startNewConversation() {
+        ChatHistoryStore.clear(this);
+        chatAdapter.clear();
+        history.clear();
+        binding.txtMessage.setVisibility(View.VISIBLE);
+        binding.rvSuggestions.setVisibility(View.VISIBLE);
+        binding.rvChat.setVisibility(View.GONE);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (!chatAdapter.isEmpty()) {
+            ChatHistoryStore.save(this, chatAdapter.getItems(), history);
+        }
     }
 
     @Override

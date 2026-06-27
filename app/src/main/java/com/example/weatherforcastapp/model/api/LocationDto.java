@@ -1,5 +1,7 @@
 package com.example.weatherforcastapp.model.api;
 
+import com.google.gson.annotations.SerializedName;
+
 public final class LocationDto {
 
     private String name;
@@ -7,6 +9,8 @@ public final class LocationDto {
     private double lat;
     private double lon;
 
+    @SerializedName("localtime")
+    private String localtime;
 
     public LocationDto(
             String name,
@@ -43,5 +47,9 @@ public final class LocationDto {
 
     public String getRegion(){
         return "";
+    }
+
+    public String getLocaltime() {
+        return localtime;
     }
 }

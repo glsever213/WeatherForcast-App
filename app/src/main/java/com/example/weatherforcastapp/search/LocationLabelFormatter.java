@@ -4,8 +4,6 @@ import androidx.annotation.NonNull;
 
 import com.example.weatherforcastapp.model.api.LocationDto;
 
-import java.util.Locale;
-
 /** Helper để đổi Location API thành nhãn hiển thị ngắn, gọn, đồng nhất. */
 public final class LocationLabelFormatter {
 
@@ -35,18 +33,14 @@ public final class LocationLabelFormatter {
     public static String subtitle(@NonNull LocationDto dto) {
         String region = safe(dto.getRegion());
         String country = safe(dto.getCountry());
-        String coords = String.format(Locale.US, "%.4f, %.4f", dto.getLat(), dto.getLon());
 
         if (!region.isEmpty() && !country.isEmpty()) {
-            return region + " • " + country + " • " + coords;
+            return region + " • " + country;
         }
         if (!country.isEmpty()) {
-            return country + " • " + coords;
+            return country;
         }
-        if (!region.isEmpty()) {
-            return region + " • " + coords;
-        }
-        return coords;
+        return region;
     }
 
     private static String safe(String value) {

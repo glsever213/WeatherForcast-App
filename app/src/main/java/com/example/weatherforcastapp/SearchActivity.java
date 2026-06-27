@@ -1,5 +1,7 @@
 package com.example.weatherforcastapp;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -9,10 +11,9 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.example.weatherforcastapp.data.PopularCities;
 import com.example.weatherforcastapp.data.PopularCity;
 import com.example.weatherforcastapp.databinding.ActivitySearchBinding;
 import com.example.weatherforcastapp.location.LocationContract;
@@ -20,7 +21,6 @@ import com.example.weatherforcastapp.model.api.LocationDto;
 import com.example.weatherforcastapp.search.GeocodingRepository;
 import com.example.weatherforcastapp.search.LocationLabelFormatter;
 import com.example.weatherforcastapp.search.SearchResultAdapter;
-import com.example.weatherforcastapp.ui.PopularCityAdapter;
 import com.example.weatherforcastapp.util.ActivityTransitions;
 import com.example.weatherforcastapp.util.LocationHelper;
 import com.example.weatherforcastapp.util.LocationNameResolver;
@@ -35,6 +35,8 @@ import java.util.Locale;
  */
 public class SearchActivity extends AppCompatActivity {
 
+    private static final int REQ_LOCATION = 2001;
+
     public static final String EXTRA_MODE = "extra_mode";
     public static final int MODE_ONBOARDING = 1;
     public static final int MODE_MANAGEMENT = 2;
@@ -43,7 +45,6 @@ public class SearchActivity extends AppCompatActivity {
     private int mode = MODE_ONBOARDING;
 
     private final GeocodingRepository geocodingRepository = new GeocodingRepository();
-    private PopularCityAdapter popularCityAdapter;
     private SearchResultAdapter searchResultAdapter;
     private boolean showingSearchResults = false;
 
@@ -67,38 +68,61 @@ public class SearchActivity extends AppCompatActivity {
 
         mode = getIntent().getIntExtra(EXTRA_MODE, MODE_ONBOARDING);
 
-        setupPopularCities();
+        setupSearchResults();
         setupSearchInput();
 
         binding.buttonCancel.setOnClickListener(v -> onCancel());
 
-        binding.chipLocate.setOnClickListener(v -> {
-            if (!LocationHelper.hasPermission(this)) {
-                Toast.makeText(this, R.string.location_permission_message, Toast.LENGTH_SHORT).show();
-                return;
+        binding.chipLocate.setOnClickListener(v -> locateCurrent());
+    }
+
+    private void locateCurrent() {
+        if (!LocationHelper.hasPermission(this)) {
+            ActivityCompat.requestPermissions(
+                    this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
+                    REQ_LOCATION
+            );
+            return;
+        }
+
+        LocationHelper.fetchCurrent(this, new LocationHelper.Callback() {
+            @Override
+            public void onLocation(double lat, double lon) {
+                new Thread(() -> {
+                    String cityName = LocationNameResolver.resolve(
+                            SearchActivity.this,
+                            lat,
+                            lon,
+                            getString(R.string.locate_chip)
+                    );
+                    runOnUiThread(() -> openPreview(new PopularCity(cityName, lat, lon, true)));
+                }).start();
             }
-            LocationHelper.fetchCurrent(this, new LocationHelper.Callback() {
-                @Override
-                public void onLocation(double lat, double lon) {
-                    //Bổ sung: Lấy tên của vị trị hiện tại
-                    new Thread(() -> {
-                        String cityName = LocationNameResolver.resolve(
-                                SearchActivity.this,
-                                lat,
-                                lon,
-                                getString(R.string.locate_chip)
-                        );
 
-                        runOnUiThread(() -> openPreview(new PopularCity(cityName, lat, lon, true)));
-                    }).start();
-                }
-
-                @Override
-                public void onError() {
-                    Toast.makeText(SearchActivity.this, R.string.search_hint, Toast.LENGTH_SHORT).show();
-                }
-            });
+            @Override
+            public void onError(@NonNull String reason) {
+                Toast.makeText(SearchActivity.this, reason, Toast.LENGTH_LONG).show();
+            }
         });
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode != REQ_LOCATION) return;
+        boolean granted = false;
+        for (int r : grantResults) {
+            if (r == PackageManager.PERMISSION_GRANTED) {
+                granted = true;
+                break;
+            }
+        }
+        if (granted) {
+            locateCurrent();
+        } else {
+            Toast.makeText(this, R.string.loc_err_permission, Toast.LENGTH_LONG).show();
+        }
     }
 
     private void setupSearchInput() {
@@ -119,7 +143,7 @@ public class SearchActivity extends AppCompatActivity {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 String current = s == null ? "" : s.toString().trim();
                 if (current.isEmpty() && showingSearchResults) {
-                    showPopularCities();
+                    showEmptySearch();
                     binding.textSearchState.setVisibility(android.view.View.GONE);
                 }
             }
@@ -130,43 +154,30 @@ public class SearchActivity extends AppCompatActivity {
         });
     }
 
-    private void setupPopularCities() {
-        binding.recyclerCityList.setLayoutManager(new GridLayoutManager(this, 3));
-
-        popularCityAdapter = new PopularCityAdapter(
-                PopularCities.all(),
-                this::openPreview
-        );
-
+    private void setupSearchResults() {
         searchResultAdapter = new SearchResultAdapter(location ->
                 openPreview(toPopularCity(location))
         );
 
-        binding.recyclerCityList.setAdapter(popularCityAdapter);
         binding.recyclerSearchResults.setLayoutManager(new LinearLayoutManager(this));
         binding.recyclerSearchResults.setAdapter(searchResultAdapter);
 
         showingSearchResults = false;
     }
 
-    private void showPopularCities() {
+    private void showEmptySearch() {
         if (!showingSearchResults) {
             return;
         }
-        binding.recyclerCityList.setVisibility(android.view.View.VISIBLE);
-        binding.recyclerCityList.setLayoutManager(new GridLayoutManager(this, 3));
-        binding.recyclerCityList.setAdapter(popularCityAdapter);
         binding.chipLocate.setVisibility(android.view.View.VISIBLE);
         binding.recyclerSearchResults.setVisibility(android.view.View.GONE);
+        searchResultAdapter.clear();
         showingSearchResults = false;
     }
 
     private void showSearchResults(@NonNull List<LocationDto> results, @NonNull String query) {
-        binding.recyclerCityList.setVisibility(android.view.View.GONE);
-        binding.chipLocate.setVisibility(android.view.View.GONE);
+        binding.chipLocate.setVisibility(android.view.View.VISIBLE);
         binding.recyclerSearchResults.setVisibility(android.view.View.VISIBLE);
-        binding.recyclerSearchResults.setLayoutManager(new LinearLayoutManager(this));
-        binding.recyclerSearchResults.setAdapter(searchResultAdapter);
         searchResultAdapter.submitList(results);
         showingSearchResults = true;
 
@@ -178,11 +189,8 @@ public class SearchActivity extends AppCompatActivity {
 
     private void showNoResults(@NonNull String query) {
         searchResultAdapter.clear();
-        binding.recyclerCityList.setVisibility(android.view.View.GONE);
-        binding.chipLocate.setVisibility(android.view.View.GONE);
+        binding.chipLocate.setVisibility(android.view.View.VISIBLE);
         binding.recyclerSearchResults.setVisibility(android.view.View.VISIBLE);
-        binding.recyclerSearchResults.setLayoutManager(new LinearLayoutManager(this));
-        binding.recyclerSearchResults.setAdapter(searchResultAdapter);
         showingSearchResults = true;
 
         binding.textSearchState.setText(
@@ -196,7 +204,7 @@ public class SearchActivity extends AppCompatActivity {
         String q = cs != null ? cs.toString().trim() : "";
         if (q.isEmpty()) {
             Toast.makeText(this, R.string.search_empty, Toast.LENGTH_SHORT).show();
-            showPopularCities();
+            showEmptySearch();
             return;
         }
 
@@ -276,7 +284,7 @@ public class SearchActivity extends AppCompatActivity {
         int flow = mode == MODE_ONBOARDING
                 ? LocationContract.FLOW_ONBOARDING
                 : LocationContract.FLOW_MANAGEMENT;
-        PreviewBottomSheet.show(getSupportFragmentManager(), city.name, city.lat, city.lon, flow);
+        PreviewBottomSheet.show(getSupportFragmentManager(), city.name, city.lat, city.lon, flow, city.primaryStyle);
     }
 
     private void onCancel() {
@@ -296,7 +304,6 @@ public class SearchActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
         onCancel();
     }
 }

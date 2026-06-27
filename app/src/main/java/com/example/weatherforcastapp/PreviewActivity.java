@@ -106,8 +106,7 @@ public class PreviewActivity extends AppCompatActivity {
     private void loadWeatherData() {
         showLoading(true);
 
-        WeatherPreferences prefs = WeatherPreferences.get(this);
-        weatherRepo.fetchForecastForHome(lat, lon, prefs, true, "vi",
+        weatherRepo.fetchForecastForHome(lat, lon, "vi",
                 new WeatherRepository.HomeForecastListener() {
                     @Override
                     public void onSuccess(@NonNull ForecastResponse body) {
@@ -121,7 +120,6 @@ public class PreviewActivity extends AppCompatActivity {
                     public void onFailure(@Nullable String message) {
                         runOnUiThread(() -> {
                             showLoading(false);
-                            // Không toast nếu message null (cache miss / throttle) — silent fail
                             if (message != null) {
                                 Toast.makeText(
                                         PreviewActivity.this,

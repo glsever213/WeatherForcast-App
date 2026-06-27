@@ -7,68 +7,74 @@
     android:background="@color/screen_bg_black"
     android:fitsSystemWindows="true">
 
-    <eightbitlab.com.blurview.BlurTarget
-        android:id="@+id/blurTargetRoot"
+    <com.example.weatherforcastapp.ui.widget.GradientShiftBackgroundView
+        android:id="@+id/bgGradientShift"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent" />
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/weatherAnimation"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0.58"
+        android:scaleType="centerCrop"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        app:lottie_renderMode="hardware" />
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollForecastContent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:fillViewport="true"
+        android:paddingBottom="24dp">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
             android:paddingHorizontal="16dp"
-            android:paddingBottom="8dp">
+            android:paddingTop="8dp">
 
-            <LinearLayout
+            <ImageButton
+                android:id="@+id/buttonBackForecast"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="-8dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/back"
+                android:src="@drawable/ic_back_24" />
+
+            <include
+                android:id="@+id/blockTodayHourly"
+                layout="@layout/widget_today_hourly_block"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingTop="8dp">
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/buttonBackForecast"
-                    style="@style/Widget.Material3.Button.TextButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/back"
-                    android:textColor="@color/text_primary_on_dark" />
-
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_weight="1" />
-
-                <ImageButton
-                    android:id="@+id/buttonSettingsForecast"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:contentDescription="@string/settings"
-                    android:src="@drawable/ic_settings_24" />
-            </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/hourly_block_placeholder_height"
-                android:layout_marginTop="8dp" />
+                android:layout_marginTop="12dp" />
 
             <include
                 android:id="@+id/blockForecast5dTable"
                 layout="@layout/widget_forecast_5d_table"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_marginTop="20dp"
-                android:layout_weight="1" />
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp" />
         </LinearLayout>
-    </eightbitlab.com.blurview.BlurTarget>
+    </androidx.core.widget.NestedScrollView>
 
-    <include
-        android:id="@+id/blockTodayHourly"
-        layout="@layout/widget_today_hourly_block"
+    <FrameLayout
+        android:id="@+id/loadingOverlay"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="top"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="@dimen/forecast_hourly_overlay_top" />
+        android:layout_height="match_parent"
+        android:background="@color/screen_bg_black"
+        android:clickable="true"
+        android:focusable="true">
+
+        <ProgressBar
+            android:id="@+id/progressForecast"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:indeterminateTint="@color/text_secondary_on_dark" />
+    </FrameLayout>
 </FrameLayout>

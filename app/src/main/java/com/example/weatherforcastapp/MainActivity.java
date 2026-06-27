@@ -15,6 +15,7 @@ import com.example.weatherforcastapp.databinding.ActivityMainBinding;
 import com.example.weatherforcastapp.prefs.WeatherPreferences;
 import com.example.weatherforcastapp.HomeActivity;
 import com.example.weatherforcastapp.SearchActivity;
+import com.example.weatherforcastapp.model.SavedLocation;
 import com.example.weatherforcastapp.util.ActivityTransitions;
 import com.example.weatherforcastapp.util.LocationHelper;
 import com.example.weatherforcastapp.util.LocationNameResolver;
@@ -162,7 +163,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void saveAndGoHome(double lat, double lon, String cityName) {
         WeatherPreferences prefs = WeatherPreferences.get(this);
-        prefs.setCurrentLocation(lat, lon, cityName);
+        prefs.setCurrentLocation(lat, lon, cityName, true);
+        prefs.markGpsLocation(lat, lon);
         HomeActivity.startClearTask(this, lat, lon, cityName);
         finish();
     }

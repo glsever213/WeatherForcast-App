@@ -63,5 +63,11 @@
             android:exported="false"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.WeatherForcastApp.Black" />
+
+        <activity
+            android:name=".VisualMapActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.WeatherForcastApp.Black" />
     </application>
 </manifest>

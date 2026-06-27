@@ -1,5 +1,7 @@
 package com.example.weatherforcastapp.model;
 
+import androidx.annotation.Nullable;
+
 import java.io.Serializable;
 import java.util.Locale;
 import java.util.Objects;
@@ -10,7 +12,7 @@ import java.util.Objects;
 public final class SavedLocation implements Serializable {
 
     private final String id;
-    private final String displayName;
+    private String displayName;
     private final double latitude;
     private final double longitude;
     private String cachedSummaryLine;
@@ -18,6 +20,9 @@ public final class SavedLocation implements Serializable {
     private String cachedHighLow;     // Ví dụ: "29° / 24°"
     private String cachedIconCode;    // Ví dụ: "113"
     private String cachedHumidity;    // Ví dụ: "80%"
+    private Integer cachedConditionCode;
+    private boolean cachedIsDaytime = true;
+    private boolean fromGps;
 
     public SavedLocation(String displayName, double latitude, double longitude, String cachedSummaryLine) {
         this.id = buildId(latitude, longitude);
@@ -31,12 +36,44 @@ public final class SavedLocation implements Serializable {
         return String.format(Locale.US, "%.5f_%.5f", lat, lon);
     }
 
+    /** Cùng điểm (~8 km) — GPS vs geocoding search thường lệch vài phần mili độ. */
+    public static boolean isSamePlace(double lat1, double lon1, double lat2, double lon2) {
+        if (buildId(lat1, lon1).equals(buildId(lat2, lon2))) {
+            return true;
+        }
+        return distanceKm(lat1, lon1, lat2, lon2) < 8.0;
+    }
+
+    private static double distanceKm(double lat1, double lon1, double lat2, double lon2) {
+        double r = 6371.0;
+        double dLat = Math.toRadians(lat2 - lat1);
+        double dLon = Math.toRadians(lon2 - lon1);
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
+                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
+                * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        return r * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    }
+
     public String getId() {
         return id;
     }
 
     public String getDisplayName() {
         return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        if (displayName != null && !displayName.isEmpty()) {
+            this.displayName = displayName;
+        }
+    }
+
+    public boolean isFromGps() {
+        return fromGps;
+    }
+
+    public void setFromGps(boolean fromGps) {
+        this.fromGps = fromGps;
     }
 
     public double getLatitude() {
@@ -85,6 +122,23 @@ public final class SavedLocation implements Serializable {
 
     public void setCachedHumidity(String cachedHumidity) {
         this.cachedHumidity = cachedHumidity;
+    }
+
+    @Nullable
+    public Integer getCachedConditionCode() {
+        return cachedConditionCode;
+    }
+
+    public void setCachedConditionCode(@Nullable Integer cachedConditionCode) {
+        this.cachedConditionCode = cachedConditionCode;
+    }
+
+    public boolean isCachedIsDaytime() {
+        return cachedIsDaytime;
+    }
+
+    public void setCachedIsDaytime(boolean cachedIsDaytime) {
+        this.cachedIsDaytime = cachedIsDaytime;
     }
 
     @Override

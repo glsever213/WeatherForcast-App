@@ -52,9 +52,7 @@ public final class ForecastDayAdapter extends RecyclerView.Adapter<ForecastDayAd
     public void onBindViewHolder(@NonNull VH holder, int position) {
         Row r = data.get(position);
         holder.binding.textDayLabel.setText(r.dayLabel);
-        holder.binding.textLow.setText(r.low);
-        holder.binding.textHigh.setText(r.high);
-        holder.binding.textCondition.setText(r.condition);
+        holder.binding.textDaySummary.setText(r.condition + " - " + r.high + " / " + r.low);
     }
 
     @Override

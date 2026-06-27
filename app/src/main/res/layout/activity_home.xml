@@ -14,9 +14,11 @@
         android:id="@+id/weatherAnimation"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:alpha="0.35"
+        android:alpha="0.58"
+        android:scaleType="centerCrop"
         app:lottie_autoPlay="true"
-        app:lottie_loop="true"/>
+        app:lottie_loop="true"
+        app:lottie_renderMode="hardware"/>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
@@ -52,6 +54,7 @@
                             android:layout_height="48dp"
                             android:background="?attr/selectableItemBackgroundBorderless"
                             android:contentDescription="@string/ai_fab_desc"
+                            android:scaleType="centerInside"
                             android:src="@drawable/ic_ai" />
 
                         <ImageButton
@@ -60,6 +63,7 @@
                             android:layout_height="48dp"
                             android:background="?attr/selectableItemBackgroundBorderless"
                             android:contentDescription="@string/manage_cities_title"
+                            android:scaleType="centerInside"
                             android:src="@drawable/ic_add_24" />
                     </LinearLayout>
 
@@ -76,7 +80,6 @@
                             android:layout_weight="1"
                             android:text="@string/placeholder_location"
                             android:textAppearance="@style/TextAppearance.Weather.TitleLarge"
-                            android:textColor="@color/text_primary_on_dark"
                             android:textSize="24sp"
                             android:textStyle="bold" />
                     </LinearLayout>
@@ -107,8 +110,8 @@
 
                             <ImageView
                                 android:id="@+id/imageWeatherHero"
-                                android:layout_width="140dp"
-                                android:layout_height="140dp"
+                                android:layout_width="96dp"
+                                android:layout_height="96dp"
                                 android:contentDescription="@string/forecast_24h"
                                 android:scaleType="fitCenter"
                                 tools:layout_editor_absoluteX="99dp"
@@ -119,6 +122,7 @@
                                 android:id="@+id/textCurrentTemp"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:translationX="6dp"
                                 android:text="@string/placeholder_temp"
                                 android:textAppearance="@style/TextAppearance.Weather.DisplayTemp"
                                 android:textColor="@color/text_primary_on_dark"
@@ -129,15 +133,15 @@
                                 android:id="@+id/textConditionLine"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="@string/placeholder_condition"
-                                android:textColor="@color/text_primary_on_dark"
-                                android:textSize="17sp" />
+                            android:text="@string/placeholder_condition"
+                            android:textColor="@color/text_primary_on_dark"
+                            android:textSize="17sp" />
 
                             <com.google.android.material.card.MaterialCardView
                                 android:id="@+id/cardAqi"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                app:cardBackgroundColor="#55FFFFFF"
+                                app:cardBackgroundColor="@color/glass_surface"
                                 app:cardCornerRadius="22dp"
                                 app:cardElevation="0dp"
                                 app:strokeColor="@color/glass_stroke"
@@ -184,9 +188,7 @@
                                         android:layout_height="wrap_content"
                                         android:layout_weight="1"
                                         android:text="@string/forecast_5d"
-                                        android:textColor="@color/text_on_light"
-                                        android:textSize="17sp"
-                                        android:textStyle="bold" />
+                                        android:textAppearance="@style/TextAppearance.Weather.CardTitle" />
                                 </LinearLayout>
 
                                 <androidx.recyclerview.widget.RecyclerView
@@ -199,15 +201,16 @@
                                     tools:listitem="@layout/item_forecast_day_row" />
                                 <com.google.android.material.button.MaterialButton
                                     android:id="@+id/buttonOpenForecastDetail"
-                                    style="@style/Widget.Material3.Button.ElevatedButton"
+                                    style="@style/Widget.Material3.Button.OutlinedButton"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="14dp"
                                     android:text="@string/forecast_5d_detail_cta"
-                                    android:textColor="@color/text_on_light"
+                                    android:textColor="@color/text_primary_on_dark"
                                     app:backgroundTint="@color/glass_surface"
                                     app:cornerRadius="28dp"
-                                    app:elevation="4dp" />
+                                    app:strokeColor="@color/glass_stroke_on_dark"
+                                    app:strokeWidth="1dp" />
                             </LinearLayout>
                         </com.google.android.material.card.MaterialCardView>
 
@@ -233,9 +236,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="@string/forecast_24h"
-                                    android:textColor="@color/text_on_light"
-                                    android:textSize="17sp"
-                                    android:textStyle="bold" />
+                                    android:textAppearance="@style/TextAppearance.Weather.CardTitle" />
 
                                 <com.github.mikephil.charting.charts.LineChart
                                     android:id="@+id/chartHourlyTemp"
@@ -245,6 +246,23 @@
                             </LinearLayout>
                         </com.google.android.material.card.MaterialCardView>
 
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/buttonOpenVisualMap"
+                            style="@style/Widget.Material3.Button.OutlinedButton"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:text="@string/visual_map_cta"
+                            android:textColor="@color/text_primary_on_dark"
+                            app:backgroundTint="@color/glass_surface"
+                            app:cornerRadius="28dp"
+                            app:icon="@drawable/ic_map_24"
+                            app:iconGravity="textStart"
+                            app:iconPadding="8dp"
+                            app:iconTint="@color/text_primary_on_dark"
+                            app:strokeColor="@color/glass_stroke_on_dark"
+                            app:strokeWidth="1dp" />
+
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -253,12 +271,12 @@
 
                             <LinearLayout
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
+                                android:layout_height="96dp"
                                 android:orientation="horizontal">
 
                                 <com.google.android.material.card.MaterialCardView
                                     android:layout_width="0dp"
-                                    android:layout_height="128dp"
+                                    android:layout_height="match_parent"
                                     android:layout_marginEnd="8dp"
                                     android:layout_weight="1"
                                     app:cardBackgroundColor="@color/glass_surface"
@@ -271,33 +289,43 @@
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
                                         android:gravity="center"
-                                        android:orientation="vertical"
-                                        android:padding="10dp">
+                                        android:orientation="horizontal"
+                                        android:padding="14dp">
 
-                                        <TextView
-                                            android:layout_width="match_parent"
-                                            android:layout_height="wrap_content"
-                                            android:gravity="center"
-                                            android:text="@string/slot_metric_1"
-                                            android:textAlignment="center"
-                                            android:textColor="@color/text_on_light"
-                                            android:textSize="15sp" />
+                                        <ImageView
+                                            android:layout_width="32dp"
+                                            android:layout_height="32dp"
+                                            android:contentDescription="@null"
+                                            android:src="@drawable/ic_metric_uv" />
 
-                                        <TextView
-                                            android:id="@+id/textMetricUv"
-                                            android:layout_width="wrap_content"
+                                        <LinearLayout
+                                            android:layout_width="0dp"
                                             android:layout_height="wrap_content"
-                                            android:layout_marginTop="6dp"
-                                            android:text="—"
-                                            android:textColor="@color/text_on_light"
-                                            android:textSize="18sp"
-                                            android:textStyle="bold" />
+                                            android:layout_marginStart="10dp"
+                                            android:layout_weight="1"
+                                            android:gravity="center_horizontal"
+                                            android:orientation="vertical">
+
+                                            <TextView
+                                                android:layout_width="match_parent"
+                                                android:layout_height="wrap_content"
+                                                android:text="@string/slot_metric_1"
+                                                android:textAppearance="@style/TextAppearance.Weather.MetricLabel" />
+
+                                            <TextView
+                                                android:id="@+id/textMetricUv"
+                                                android:layout_width="match_parent"
+                                                android:layout_height="wrap_content"
+                                                android:layout_marginTop="4dp"
+                                                android:text="—"
+                                                android:textAppearance="@style/TextAppearance.Weather.MetricValue" />
+                                        </LinearLayout>
                                     </LinearLayout>
                                 </com.google.android.material.card.MaterialCardView>
 
                                 <com.google.android.material.card.MaterialCardView
                                     android:layout_width="0dp"
-                                    android:layout_height="128dp"
+                                    android:layout_height="match_parent"
                                     android:layout_weight="1"
                                     app:cardBackgroundColor="@color/glass_surface"
                                     app:cardCornerRadius="20dp"
@@ -309,40 +337,50 @@
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
                                         android:gravity="center"
-                                        android:orientation="vertical"
-                                        android:padding="10dp">
+                                        android:orientation="horizontal"
+                                        android:padding="14dp">
 
-                                        <TextView
-                                            android:layout_width="match_parent"
-                                            android:layout_height="wrap_content"
-                                            android:gravity="center"
-                                            android:text="@string/slot_metric_2"
-                                            android:textAlignment="center"
-                                            android:textColor="@color/text_on_light"
-                                            android:textSize="15sp" />
+                                        <ImageView
+                                            android:layout_width="32dp"
+                                            android:layout_height="32dp"
+                                            android:contentDescription="@null"
+                                            android:src="@drawable/ic_metric_humidity" />
 
-                                        <TextView
-                                            android:id="@+id/textMetricHumidity"
-                                            android:layout_width="wrap_content"
+                                        <LinearLayout
+                                            android:layout_width="0dp"
                                             android:layout_height="wrap_content"
-                                            android:layout_marginTop="6dp"
-                                            android:text="—"
-                                            android:textColor="@color/text_on_light"
-                                            android:textSize="18sp"
-                                            android:textStyle="bold" />
+                                            android:layout_marginStart="10dp"
+                                            android:layout_weight="1"
+                                            android:gravity="center_horizontal"
+                                            android:orientation="vertical">
+
+                                            <TextView
+                                                android:layout_width="match_parent"
+                                                android:layout_height="wrap_content"
+                                                android:text="@string/slot_metric_2"
+                                                android:textAppearance="@style/TextAppearance.Weather.MetricLabel" />
+
+                                            <TextView
+                                                android:id="@+id/textMetricHumidity"
+                                                android:layout_width="match_parent"
+                                                android:layout_height="wrap_content"
+                                                android:layout_marginTop="4dp"
+                                                android:text="—"
+                                                android:textAppearance="@style/TextAppearance.Weather.MetricValue" />
+                                        </LinearLayout>
                                     </LinearLayout>
                                 </com.google.android.material.card.MaterialCardView>
                             </LinearLayout>
 
                             <LinearLayout
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
+                                android:layout_height="96dp"
                                 android:layout_marginTop="10dp"
                                 android:orientation="horizontal">
 
                                 <com.google.android.material.card.MaterialCardView
                                     android:layout_width="0dp"
-                                    android:layout_height="128dp"
+                                    android:layout_height="match_parent"
                                     android:layout_marginEnd="8dp"
                                     android:layout_weight="1"
                                     app:cardBackgroundColor="@color/glass_surface"
@@ -355,33 +393,43 @@
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
                                         android:gravity="center"
-                                        android:orientation="vertical"
-                                        android:padding="10dp">
+                                        android:orientation="horizontal"
+                                        android:padding="14dp">
 
-                                        <TextView
-                                            android:layout_width="match_parent"
-                                            android:layout_height="wrap_content"
-                                            android:gravity="center"
-                                            android:text="@string/slot_metric_3"
-                                            android:textAlignment="center"
-                                            android:textColor="@color/text_on_light"
-                                            android:textSize="15sp" />
+                                        <ImageView
+                                            android:layout_width="32dp"
+                                            android:layout_height="32dp"
+                                            android:contentDescription="@null"
+                                            android:src="@drawable/ic_metric_feels" />
 
-                                        <TextView
-                                            android:id="@+id/textMetricFeels"
-                                            android:layout_width="wrap_content"
+                                        <LinearLayout
+                                            android:layout_width="0dp"
                                             android:layout_height="wrap_content"
-                                            android:layout_marginTop="6dp"
-                                            android:text="—"
-                                            android:textColor="@color/text_on_light"
-                                            android:textSize="18sp"
-                                            android:textStyle="bold" />
+                                            android:layout_marginStart="10dp"
+                                            android:layout_weight="1"
+                                            android:gravity="center_horizontal"
+                                            android:orientation="vertical">
+
+                                            <TextView
+                                                android:layout_width="match_parent"
+                                                android:layout_height="wrap_content"
+                                                android:text="@string/slot_metric_3"
+                                                android:textAppearance="@style/TextAppearance.Weather.MetricLabel" />
+
+                                            <TextView
+                                                android:id="@+id/textMetricFeels"
+                                                android:layout_width="match_parent"
+                                                android:layout_height="wrap_content"
+                                                android:layout_marginTop="4dp"
+                                                android:text="—"
+                                                android:textAppearance="@style/TextAppearance.Weather.MetricValue" />
+                                        </LinearLayout>
                                     </LinearLayout>
                                 </com.google.android.material.card.MaterialCardView>
 
                                 <com.google.android.material.card.MaterialCardView
                                     android:layout_width="0dp"
-                                    android:layout_height="128dp"
+                                    android:layout_height="match_parent"
                                     android:layout_weight="1"
                                     app:cardBackgroundColor="@color/glass_surface"
                                     app:cardCornerRadius="20dp"
@@ -393,40 +441,51 @@
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
                                         android:gravity="center"
-                                        android:orientation="vertical"
-                                        android:padding="10dp">
+                                        android:orientation="horizontal"
+                                        android:padding="14dp">
 
-                                        <TextView
-                                            android:layout_width="match_parent"
-                                            android:layout_height="wrap_content"
-                                            android:gravity="center"
-                                            android:text="@string/slot_metric_4"
-                                            android:textAlignment="center"
-                                            android:textColor="@color/text_on_light"
-                                            android:textSize="15sp" />
+                                        <ImageView
+                                            android:layout_width="32dp"
+                                            android:layout_height="32dp"
+                                            android:contentDescription="@null"
+                                            android:src="@drawable/ic_metric_wind" />
 
-                                        <TextView
-                                            android:id="@+id/textMetricWind"
-                                            android:layout_width="wrap_content"
+                                        <LinearLayout
+                                            android:layout_width="0dp"
                                             android:layout_height="wrap_content"
-                                            android:layout_marginTop="6dp"
-                                            android:text="—"
-                                            android:textColor="@color/text_on_light"
-                                            android:textSize="18sp"
-                                            android:textStyle="bold" />
+                                            android:layout_marginStart="10dp"
+                                            android:layout_weight="1"
+                                            android:gravity="center_horizontal"
+                                            android:orientation="vertical">
+
+                                            <TextView
+                                                android:layout_width="match_parent"
+                                                android:layout_height="wrap_content"
+                                                android:text="@string/slot_metric_4"
+                                                android:textAppearance="@style/TextAppearance.Weather.MetricLabel" />
+
+                                            <TextView
+                                                android:id="@+id/textMetricWind"
+                                                android:layout_width="match_parent"
+                                                android:layout_height="wrap_content"
+                                                android:layout_marginTop="4dp"
+                                                android:text="—"
+                                                android:textAppearance="@style/TextAppearance.Weather.MetricValue" />
+                                        </LinearLayout>
                                     </LinearLayout>
                                 </com.google.android.material.card.MaterialCardView>
                             </LinearLayout>
 
                             <LinearLayout
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
+                                android:layout_height="96dp"
                                 android:layout_marginTop="10dp"
                                 android:orientation="horizontal">
 
                                 <com.google.android.material.card.MaterialCardView
+                                    android:id="@+id/cardMetricSun"
                                     android:layout_width="0dp"
-                                    android:layout_height="128dp"
+                                    android:layout_height="match_parent"
                                     android:layout_marginEnd="8dp"
                                     android:layout_weight="1"
                                     app:cardBackgroundColor="@color/glass_surface"
@@ -439,34 +498,44 @@
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
                                         android:gravity="center"
-                                        android:orientation="vertical"
-                                        android:padding="10dp">
+                                        android:orientation="horizontal"
+                                        android:padding="14dp">
 
-                                        <TextView
-                                            android:layout_width="match_parent"
-                                            android:layout_height="wrap_content"
-                                            android:gravity="center"
-                                            android:text="@string/slot_metric_5"
-                                            android:textAlignment="center"
-                                            android:textColor="@color/text_on_light"
-                                            android:textSize="15sp" />
+                                        <ImageView
+                                            android:layout_width="32dp"
+                                            android:layout_height="32dp"
+                                            android:contentDescription="@null"
+                                            android:src="@drawable/ic_metric_sun" />
 
-                                        <TextView
-                                            android:id="@+id/textMetricSun"
-                                            android:layout_width="wrap_content"
+                                        <LinearLayout
+                                            android:layout_width="0dp"
                                             android:layout_height="wrap_content"
-                                            android:layout_marginTop="6dp"
-                                            android:gravity="center"
-                                            android:text="—"
-                                            android:textColor="@color/text_on_light"
-                                            android:textSize="18sp"
-                                            android:textStyle="bold" />
+                                            android:layout_marginStart="10dp"
+                                            android:layout_weight="1"
+                                            android:gravity="center_horizontal"
+                                            android:orientation="vertical">
+
+                                            <TextView
+                                                android:layout_width="match_parent"
+                                                android:layout_height="wrap_content"
+                                                android:text="@string/slot_metric_5"
+                                                android:textAppearance="@style/TextAppearance.Weather.MetricLabel" />
+
+                                            <TextView
+                                                android:id="@+id/textMetricSun"
+                                                android:layout_width="match_parent"
+                                                android:layout_height="wrap_content"
+                                                android:layout_marginTop="4dp"
+                                                android:text="—"
+                                                android:textAppearance="@style/TextAppearance.Weather.MetricValue"
+                                                android:textSize="12sp" />
+                                        </LinearLayout>
                                     </LinearLayout>
                                 </com.google.android.material.card.MaterialCardView>
 
                                 <com.google.android.material.card.MaterialCardView
                                     android:layout_width="0dp"
-                                    android:layout_height="128dp"
+                                    android:layout_height="match_parent"
                                     android:layout_weight="1"
                                     app:cardBackgroundColor="@color/glass_surface"
                                     app:cardCornerRadius="20dp"
@@ -478,27 +547,37 @@
                                         android:layout_width="match_parent"
                                         android:layout_height="match_parent"
                                         android:gravity="center"
-                                        android:orientation="vertical"
-                                        android:padding="10dp">
+                                        android:orientation="horizontal"
+                                        android:padding="14dp">
 
-                                        <TextView
-                                            android:layout_width="match_parent"
-                                            android:layout_height="wrap_content"
-                                            android:gravity="center"
-                                            android:text="@string/slot_metric_6"
-                                            android:textAlignment="center"
-                                            android:textColor="@color/text_on_light"
-                                            android:textSize="15sp" />
+                                        <ImageView
+                                            android:layout_width="32dp"
+                                            android:layout_height="32dp"
+                                            android:contentDescription="@null"
+                                            android:src="@drawable/ic_metric_pressure" />
 
-                                        <TextView
-                                            android:id="@+id/textMetricPressure"
-                                            android:layout_width="wrap_content"
+                                        <LinearLayout
+                                            android:layout_width="0dp"
                                             android:layout_height="wrap_content"
-                                            android:layout_marginTop="6dp"
-                                            android:text="—"
-                                            android:textColor="@color/text_on_light"
-                                            android:textSize="18sp"
-                                            android:textStyle="bold" />
+                                            android:layout_marginStart="10dp"
+                                            android:layout_weight="1"
+                                            android:gravity="center_horizontal"
+                                            android:orientation="vertical">
+
+                                            <TextView
+                                                android:layout_width="match_parent"
+                                                android:layout_height="wrap_content"
+                                                android:text="@string/slot_metric_6"
+                                                android:textAppearance="@style/TextAppearance.Weather.MetricLabel" />
+
+                                            <TextView
+                                                android:id="@+id/textMetricPressure"
+                                                android:layout_width="match_parent"
+                                                android:layout_height="wrap_content"
+                                                android:layout_marginTop="4dp"
+                                                android:text="—"
+                                                android:textAppearance="@style/TextAppearance.Weather.MetricValue" />
+                                        </LinearLayout>
                                     </LinearLayout>
                                 </com.google.android.material.card.MaterialCardView>
                             </LinearLayout>

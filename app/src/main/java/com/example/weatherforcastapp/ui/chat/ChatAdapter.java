@@ -24,6 +24,25 @@ public final class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.VH> {
         notifyItemInserted(items.size() - 1);
     }
 
+    public void setAll(@NonNull List<ChatItem> newItems) {
+        items.clear();
+        items.addAll(newItems);
+        notifyDataSetChanged();
+    }
+
+    public void clear() {
+        items.clear();
+        notifyDataSetChanged();
+    }
+
+    public boolean isEmpty() {
+        return items.isEmpty();
+    }
+
+    public List<ChatItem> getItems() {
+        return new ArrayList<>(items);
+    }
+
     /** Cập nhật nội dung tin cuối (dùng để thay "đang trả lời..." bằng câu trả lời thật). */
     public void updateLast(@NonNull ChatItem item) {
         if (items.isEmpty()) return;

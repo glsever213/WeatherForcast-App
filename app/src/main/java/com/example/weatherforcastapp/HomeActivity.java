@@ -12,8 +12,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.bumptech.glide.Glide;
-import com.example.weatherforcastapp.api.WeatherApiIcons;
 import com.example.weatherforcastapp.data.WeatherRepository;
 import com.example.weatherforcastapp.databinding.ActivityHomeBinding;
 import com.example.weatherforcastapp.location.LocationContract;
@@ -26,6 +24,8 @@ import com.example.weatherforcastapp.model.api.ForecastResponse;
 import com.example.weatherforcastapp.model.api.HourItemDto;
 import com.example.weatherforcastapp.prefs.WeatherPreferences;
 import com.example.weatherforcastapp.ui.ForecastDayAdapter;
+import com.bumptech.glide.Glide;
+import com.example.weatherforcastapp.api.WeatherApiIcons;
 import com.example.weatherforcastapp.util.ActivityTransitions;
 import com.example.weatherforcastapp.util.ChartSamples;
 import com.example.weatherforcastapp.util.WeatherConditionTheme;
@@ -39,6 +39,7 @@ import java.util.Locale;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.ValueFormatter;
 import android.graphics.Color;
 
 /**
@@ -108,6 +109,8 @@ public class HomeActivity extends AppCompatActivity {
 
         binding.buttonOpenForecastDetail.setOnClickListener(this::openFiveDayForecastScreen);
 
+        binding.buttonOpenVisualMap.setOnClickListener(v -> VisualMapActivity.start(this));
+
         binding.swipeRefresh.setOnRefreshListener(this::onSwipeRefresh);
 
 //        if (!prefs.hasCurrentLocation()) {
@@ -128,7 +131,7 @@ public class HomeActivity extends AppCompatActivity {
             binding.swipeRefresh.setRefreshing(false);
             return;
         }
-        weatherRepo.fetchForecastForHome(la, lo, prefs, true, "vi", new WeatherRepository.HomeForecastListener() {
+        weatherRepo.fetchForecastForHome(la, lo, "vi", new WeatherRepository.HomeForecastListener() {
             @Override
             public void onSuccess(@NonNull ForecastResponse body) {
                 runOnUiThread(() -> {
@@ -153,17 +156,14 @@ public class HomeActivity extends AppCompatActivity {
         float t = Math.min(1f, Math.max(0f, scrollY / HERO_HIDE_DISTANCE_PX));
         float p = t * t * (3f - 2f * t);
         binding.motionHero.setProgress(p);
+        binding.textLocationName.setAlpha(1f - p);
+        binding.textLocationName.setTranslationY(-24f * p);
         binding.motionHero.setVisibility(View.VISIBLE);
     }
 
     /** Icon mẫu khi chưa có dữ liệu API (hoặc lỗi parse). */
     private void loadWeatherApiHeroPlaceholderIfNoData() {
-        String url = WeatherApiIcons.urlDayIconCode("116", WeatherApiIcons.SIZE_HERO);
-        Glide.with(this)
-                .load(url)
-                .placeholder(R.drawable.ic_weather_placeholder)
-                .error(R.drawable.ic_weather_placeholder)
-                .into(binding.imageWeatherHero);
+        binding.imageWeatherHero.setImageResource(R.drawable.ic_weather_cloud);
     }
 
     private void openFiveDayForecastScreen(View v) {
@@ -210,7 +210,7 @@ public class HomeActivity extends AppCompatActivity {
             return;
         }
 
-        weatherRepo.fetchForecastForHome(lat, lon, prefs, false, "vi", new WeatherRepository.HomeForecastListener() {
+        weatherRepo.fetchForecastForHome(lat, lon, "vi", new WeatherRepository.HomeForecastListener() {
             @Override
             public void onSuccess(@NonNull ForecastResponse body) {
                 runOnUiThread(() -> bindForecastToHome(body));
@@ -277,15 +277,15 @@ public class HomeActivity extends AppCompatActivity {
         }
         // Đổi màu nền theo điều kiện thời tiết và thời điểm trong ngày
         applyWeatherTheme(cond != null ? cond.getCode() : null, cur.isDaytime());
-        if (cond != null) {
-            String u = WeatherApiIcons.url(cond.getIcon(), cur.isDaytime(), WeatherApiIcons.SIZE_HERO);
-            if (u != null && !u.isEmpty()) {
-                Glide.with(this)
-                        .load(u)
-                        .placeholder(R.drawable.ic_weather_placeholder)
-                        .error(R.drawable.ic_weather_placeholder)
-                        .into(binding.imageWeatherHero);
-            }
+        if (cond != null && cond.getIcon() != null) {
+            WeatherApiIcons.loadInto(
+                    this,
+                    binding.imageWeatherHero,
+                    cond.getIcon(),
+                    cur.isDaytime(),
+                    96f,
+                    R.drawable.ic_weather_placeholder
+            );
         }
 
         ForecastBucketDto fb = r.getForecast();
@@ -300,6 +300,9 @@ public class HomeActivity extends AppCompatActivity {
                 binding.textMetricSun.setText("↑ " + sunrise + " / ↓ " + sunset);
             }
 
+        }
+        if (fb == null || fb.getForecastday() == null) {
+            return;
         }
         List<ApiForecastDayDto> days = fb.getForecastday();
         List<ForecastDayAdapter.Row> rows = new ArrayList<>();
@@ -327,44 +330,108 @@ public class HomeActivity extends AppCompatActivity {
         forecastDayAdapter.setRows(rows);
 
         if (fb != null && fb.getForecastday() != null && !fb.getForecastday().isEmpty()) {
-            ApiForecastDayDto today = fb.getForecastday().get(0);
-
-            if (today.getHour() != null && !today.getHour().isEmpty()) {
-
-                List<Entry> entries = new ArrayList<>();
-
-                for (int i = 0; i < today.getHour().size(); i+=3) {
-                    HourItemDto h = today.getHour().get(i);
-
-                    if (h.getTempC() != null) {
-                        entries.add(new Entry(i, h.getTempC().floatValue()));
-                    }
-                }
-
-                updateHourlyChart(entries);
-            }
+            bindHourlyChart(r, cur);
         }
     }
 
-    private void updateHourlyChart(List<Entry> entries) {
+    private void bindHourlyChart(@NonNull ForecastResponse r, @NonNull CurrentDto cur) {
+        ForecastBucketDto fb = r.getForecast();
+        if (fb == null || fb.getForecastday() == null || fb.getForecastday().isEmpty()) {
+            return;
+        }
+        if (cur.getTempC() == null) {
+            return;
+        }
 
+        List<HourItemDto> timeline = new ArrayList<>();
+        for (ApiForecastDayDto dayDto : fb.getForecastday()) {
+            if (dayDto != null && dayDto.getHour() != null) {
+                timeline.addAll(dayDto.getHour());
+            }
+        }
+        if (timeline.isEmpty()) {
+            return;
+        }
+
+        String localtime = r.getLocation() != null ? r.getLocation().getLocaltime() : null;
+        int startIdx = findCurrentHourIndex(timeline, localtime);
+
+        List<Entry> entries = new ArrayList<>();
+        List<String> labels = new ArrayList<>();
+        entries.add(new Entry(0, cur.getTempC().floatValue()));
+        labels.add(getString(R.string.forecast_chart_now));
+
+        int chartIdx = 1;
+        for (int i = startIdx + 3; i < timeline.size() && chartIdx < 8; i += 3) {
+            HourItemDto h = timeline.get(i);
+            if (h == null || h.getTempC() == null) {
+                continue;
+            }
+            entries.add(new Entry(chartIdx, h.getTempC().floatValue()));
+            labels.add(formatHourLabel(h.getTime()));
+            chartIdx++;
+        }
+
+        if (entries.size() < 2) {
+            return;
+        }
+        updateHourlyChart(entries, labels);
+    }
+
+    private static int findCurrentHourIndex(@NonNull List<HourItemDto> hours, @Nullable String localtime) {
+        if (localtime != null && localtime.length() >= 13) {
+            try {
+                String datePart = localtime.substring(0, 10);
+                int currentHour = Integer.parseInt(localtime.substring(11, 13));
+                String target = String.format(Locale.US, "%s %02d:00", datePart, currentHour);
+                for (int i = 0; i < hours.size(); i++) {
+                    String time = hours.get(i).getTime();
+                    if (target.equals(time)) {
+                        return i;
+                    }
+                }
+                for (int i = 0; i < hours.size(); i++) {
+                    String time = hours.get(i).getTime();
+                    if (time != null && time.compareTo(target) >= 0) {
+                        return i;
+                    }
+                }
+            } catch (NumberFormatException ignored) {
+            }
+        }
+        return 0;
+    }
+
+    private static String formatHourLabel(@Nullable String isoTime) {
+        if (isoTime != null && isoTime.length() >= 16) {
+            return isoTime.substring(11, 16);
+        }
+        return "";
+    }
+
+    private void updateHourlyChart(List<Entry> entries, List<String> labels) {
         LineDataSet set = new LineDataSet(entries, "°C");
-
         set.setColor(getColor(R.color.chart_line));
         set.setLineWidth(2f);
         set.setDrawCircles(true);
         set.setCircleColor(Color.WHITE);
         set.setCircleHoleColor(getColor(R.color.chart_line));
-        set.setDrawValues(true);
-        set.setValueTextColor(Color.DKGRAY);
-        set.setValueTextSize(11f);
+        set.setDrawValues(false);
         set.setMode(LineDataSet.Mode.CUBIC_BEZIER);
 
-        LineData data = new LineData(set);
+        binding.chartHourlyTemp.getXAxis().setGranularity(1f);
+        binding.chartHourlyTemp.getXAxis().setValueFormatter(new ValueFormatter() {
+            @Override
+            public String getFormattedValue(float value) {
+                int i = Math.round(value);
+                return (i >= 0 && i < labels.size()) ? labels.get(i) : "";
+            }
+        });
 
-        binding.chartHourlyTemp.setData(data);
-        // Giãn trục X để chữ không bị chen chúc; phần dư tràn sang phải, người dùng kéo để xem.
-        binding.chartHourlyTemp.setVisibleXRangeMaximum(9f);
+        binding.chartHourlyTemp.setData(new LineData(set));
+        binding.chartHourlyTemp.getAxisLeft().resetAxisMinimum();
+        binding.chartHourlyTemp.getAxisLeft().resetAxisMaximum();
+        binding.chartHourlyTemp.setVisibleXRangeMaximum(4f);
         binding.chartHourlyTemp.moveViewToX(0f);
         binding.chartHourlyTemp.invalidate();
     }
@@ -414,7 +481,7 @@ public class HomeActivity extends AppCompatActivity {
                 animRes = R.raw.rain;
                 break;
             case STORM:
-                animRes = R.raw.storm;
+                animRes = R.raw.rain;
                 break;
             case SUNNY:
             default:

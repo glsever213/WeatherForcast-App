@@ -20,6 +20,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <ImageButton
+        android:id="@+id/buttonNewChat"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/ai_new_chat"
+        android:src="@drawable/ic_new_chat"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <LinearLayout
         android:id="@+id/contentLayout"
         android:layout_width="0dp"
@@ -40,7 +52,6 @@
             android:lineSpacingExtra="2dp"
             android:text="@string/ai_message"
             android:textAppearance="@style/TextAppearance.Weather.TitleLarge"
-            android:textColor="#FFFFFF"
             android:textSize="22sp" />
 
         <androidx.recyclerview.widget.RecyclerView
@@ -84,8 +95,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:text="@string/ai_loading_data"
-            android:textColor="#FFFFFF"
-            android:textSize="14sp" />
+            android:textAppearance="@style/TextAppearance.Weather.OnDarkCaption" />
     </LinearLayout>
 
     <LinearLayout
@@ -120,8 +130,8 @@
             android:paddingVertical="10dp"
             android:scrollbars="vertical"
             android:textAppearance="@style/TextAppearance.Weather.Body"
-            android:textColor="#1A1A1A"
-            android:textColorHint="#80000000"
+            android:textColor="@color/text_primary_on_dark"
+            android:textColorHint="@color/text_secondary_on_dark"
             android:textSize="15sp" />
 
         <ImageButton
@@ -132,10 +142,10 @@
             android:layout_marginStart="6dp"
             android:layout_marginEnd="4dp"
             android:background="@drawable/bg_send_circle"
-            android:backgroundTint="#808080"
+            android:backgroundTint="@color/chat_send_button_tint"
             android:contentDescription="@string/ai_send_desc"
-            android:padding="11dp"
-            android:scaleType="fitCenter"
+            android:padding="10dp"
+            android:scaleType="centerInside"
             android:src="@drawable/ic_send_24" />
 
     </LinearLayout>

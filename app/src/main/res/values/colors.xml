@@ -14,19 +14,27 @@
     <color name="search_bar_bg">#2C2C2C</color>
     <color name="text_primary_on_dark">#FFFFFF</color>
     <color name="text_secondary_on_dark">#B0B0B0</color>
+    <!-- Home: chữ phụ sáng hơn, gần trắng — ổn trên mọi nền animation -->
+    <color name="text_muted_on_home">#E3EBF4</color>
     <color name="chip_blue">#4A91FF</color>
     <color name="text_on_light">#1A1A1A</color>
+    <color name="text_secondary_on_light">#5C6370</color>
+    <color name="metric_icon_tint">#DDF7FF</color>
+    <color name="weather_icon_tint">#FFFFFFFF</color>
     <color name="chart_line">#FFEB3B</color>
     <color name="card_overlay">#66838BAA</color>
 
-    <!-- Glass / Figma-style -->
-    <color name="glass_surface">#CCFFFFFF</color>
-    <color name="glass_surface_soft">#99FFFFFF</color>
-    <color name="glass_stroke">#66FFFFFF</color>
+    <!-- Glass / Figma-style: white-tinted frosted glass that blends on any weather bg -->
+    <color name="glass_surface">#22FFFFFF</color>
+    <color name="glass_surface_soft">#15FFFFFF</color>
+    <color name="glass_stroke">#40FFFFFF</color>
     <color name="glass_highlight">#40FFFFFF</color>
-    <color name="glass_stroke_on_dark">#55FFFFFF</color>
+    <color name="glass_stroke_on_dark">#40FFFFFF</color>
 
     <!-- AI chat -->
-    <color name="chat_bubble_user">#4A91FF</color>
-    <color name="chat_bubble_bot">#33445F</color>
+    <color name="chat_bubble_user">#334E8F</color>
+    <color name="chat_bubble_bot">#332A3A52</color>
+    <color name="chat_input_surface">#33121B2E</color>
+    <color name="chat_send_enabled">#0E3A78</color>
+    <color name="chat_send_disabled">#B0B0B0</color>
 </resources>

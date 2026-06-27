@@ -1,6 +1,13 @@
 package com.example.weatherforcastapp.api;
 
+import android.content.Context;
+import android.widget.ImageView;
+
+import androidx.annotation.DrawableRes;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.bumptech.glide.Glide;
 
 /**
  * Ảnh điều kiện WeatherAPI — ưu tiên URL đầy đủ / relative trong {@code condition.icon}.
@@ -37,5 +44,37 @@ public final class WeatherApiIcons {
 
     public static String urlDayIconCode(@Nullable String code, int sizePx) {
         return url(code, true, sizePx);
+    }
+
+    /** Chọn kích thước CDN (64/128/256) vừa đủ nét cho view hiển thị. */
+    public static int sizeForViewPx(int viewPx) {
+        int need = Math.min(256, Math.max(64, viewPx * 2));
+        if (need <= 64) return 64;
+        if (need <= 128) return 128;
+        return 256;
+    }
+
+    /** Tải icon thời tiết nét — decode đúng px hiển thị, không phóng to quá CDN. */
+    public static void loadInto(
+            @NonNull Context context,
+            @NonNull ImageView view,
+            @Nullable String iconFromApi,
+            boolean day,
+            float sizeDp,
+            @DrawableRes int placeholder
+    ) {
+        int px = (int) (sizeDp * context.getResources().getDisplayMetrics().density + 0.5f);
+        String iconUrl = url(iconFromApi, day, sizeForViewPx(px));
+        if (iconUrl == null) {
+            view.setImageResource(placeholder);
+            return;
+        }
+        Glide.with(context)
+                .load(iconUrl)
+                .override(px, px)
+                .fitCenter()
+                .placeholder(placeholder)
+                .error(placeholder)
+                .into(view);
     }
 }

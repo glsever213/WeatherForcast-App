@@ -32,7 +32,7 @@ public final class ChartSamples {
         XAxis x = chart.getXAxis();
         x.setPosition(XAxis.XAxisPosition.BOTTOM);
         x.setDrawGridLines(false);
-        x.setTextColor(Color.DKGRAY);
+        x.setTextColor(Color.WHITE);
         x.setGranularity(1f);
         x.setValueFormatter(new ValueFormatter() {
             @Override
@@ -43,26 +43,10 @@ public final class ChartSamples {
             }
         });
 
-        chart.getAxisLeft().setTextColor(Color.DKGRAY);
+        chart.getAxisLeft().setTextColor(Color.WHITE);
         chart.getAxisLeft().setDrawGridLines(true);
+        chart.getAxisLeft().setGridColor(0x33FFFFFF);
         chart.getAxisRight().setEnabled(false);
-
-        List<Entry> entries = new ArrayList<>();
-        float[] temps = {26f, 25.5f, 25f, 25.2f, 25f, 24.8f};
-        for (int i = 0; i < temps.length; i++) {
-            entries.add(new Entry(i, temps[i]));
-        }
-        LineDataSet set = new LineDataSet(entries, "°C");
-        set.setColor(chart.getContext().getColor(R.color.chart_line));
-        set.setLineWidth(2f);
-        set.setDrawCircles(true);
-        set.setCircleColor(Color.WHITE);
-        set.setCircleHoleColor(chart.getContext().getColor(R.color.chart_line));
-        set.setDrawValues(true);
-        set.setValueTextColor(Color.DKGRAY);
-        set.setMode(LineDataSet.Mode.CUBIC_BEZIER);
-
-        //chart.setData(new LineData(set));
         chart.invalidate();
     }
 
