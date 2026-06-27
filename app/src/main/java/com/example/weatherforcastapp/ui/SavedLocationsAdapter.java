@@ -7,6 +7,9 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.example.weatherforcastapp.R;
+import com.example.weatherforcastapp.api.WeatherApiIcons;
 import com.example.weatherforcastapp.databinding.ItemSavedLocationBinding;
 import com.example.weatherforcastapp.model.SavedLocation;
 
@@ -69,8 +72,21 @@ public final class SavedLocationsAdapter extends RecyclerView.Adapter<SavedLocat
         SavedLocation loc = items.get(position);
         holder.binding.textCityName.setText(loc.getDisplayName());
         holder.binding.textCondition.setText(loc.getCachedSummaryLine().isEmpty() ? "—" : loc.getCachedSummaryLine());
-        holder.binding.textHighLow.setText("— / —");
-        holder.binding.textTempBig.setText("—°");
+        holder.binding.textHighLow.setText(loc.getCachedHighLow());
+        holder.binding.textHumidity.setText(loc.getCachedHumidity());
+        holder.binding.textTempBig.setText(loc.getCachedTemp());
+
+        String iconCode = loc.getCachedIconCode();
+        if (iconCode != null && !iconCode.isEmpty()) {
+            String url = WeatherApiIcons.url(iconCode, true, WeatherApiIcons.SIZE_LIST);
+            Glide.with(holder.itemView.getContext())
+                    .load(url)
+                    .placeholder(R.drawable.ic_weather_placeholder)
+                    .error(R.drawable.ic_weather_placeholder)
+                    .into(holder.binding.iconWeather);
+        } else {
+            holder.binding.iconWeather.setImageResource(R.drawable.ic_weather_placeholder);
+        }
 
         holder.binding.checkSelect.setVisibility(selectionMode ? View.VISIBLE : View.GONE);
         holder.binding.checkSelect.setChecked(selectedIds.contains(loc.getId()));

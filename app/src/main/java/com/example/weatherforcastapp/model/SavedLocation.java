@@ -13,7 +13,11 @@ public final class SavedLocation implements Serializable {
     private final String displayName;
     private final double latitude;
     private final double longitude;
-    private final String cachedSummaryLine;
+    private String cachedSummaryLine;
+    private String cachedTemp;        // Ví dụ: "26°"
+    private String cachedHighLow;     // Ví dụ: "29° / 24°"
+    private String cachedIconCode;    // Ví dụ: "113"
+    private String cachedHumidity;    // Ví dụ: "80%"
 
     public SavedLocation(String displayName, double latitude, double longitude, String cachedSummaryLine) {
         this.id = buildId(latitude, longitude);
@@ -44,7 +48,43 @@ public final class SavedLocation implements Serializable {
     }
 
     public String getCachedSummaryLine() {
-        return cachedSummaryLine;
+        return cachedSummaryLine != null ? cachedSummaryLine : "";
+    }
+
+    public void setCachedSummaryLine(String cachedSummaryLine) {
+        this.cachedSummaryLine = cachedSummaryLine;
+    }
+
+    public String getCachedTemp() {
+        return cachedTemp != null ? cachedTemp : "—°";
+    }
+
+    public void setCachedTemp(String cachedTemp) {
+        this.cachedTemp = cachedTemp;
+    }
+
+    public String getCachedHighLow() {
+        return cachedHighLow != null ? cachedHighLow : "— / —";
+    }
+
+    public void setCachedHighLow(String cachedHighLow) {
+        this.cachedHighLow = cachedHighLow;
+    }
+
+    public String getCachedIconCode() {
+        return cachedIconCode;
+    }
+
+    public void setCachedIconCode(String cachedIconCode) {
+        this.cachedIconCode = cachedIconCode;
+    }
+
+    public String getCachedHumidity() {
+        return cachedHumidity != null ? cachedHumidity : "—%";
+    }
+
+    public void setCachedHumidity(String cachedHumidity) {
+        this.cachedHumidity = cachedHumidity;
     }
 
     @Override
