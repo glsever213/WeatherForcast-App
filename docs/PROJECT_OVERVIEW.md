@@ -1,184 +1,164 @@
-# Dự án dự báo thời tiết — Tài liệu kỹ thuật & luồng
+# Dự án WeatherForecast App — Tài liệu tổng quan
 
-Ứng dụng mobile dự báo thời tiết; **API nguồn: [WeatherAPI.com](https://www.weatherapi.com/docs/)**. **Không dùng database**: lưu vị trí người dùng, danh sách địa điểm, cache/throttle gọi API bằng **SharedPreferences**; **giới hạn 20** địa điểm đã lưu (CRUD trên danh sách).
-
-**Danh sách màn hình (Activity):** `MainActivity`, `HomeActivity`, `SearchActivity`, `LocationManagementActivity`, `PreviewActivity`, `FiveDayForecastActivity`.
-
-**Màn hình dọc:** mọi Activity khai báo `android:screenOrientation="portrait"` trong `AndroidManifest.xml` — giảm recreate do xoay, phù hợp đồ án; vẫn nên hủy request mạng khi destroy (`WeatherRepository.cancel()`).
+Ứng dụng Android dự báo thời tiết tích hợp trợ lý AI. **API thời tiết: WeatherAPI.com**. **Không dùng database**: toàn bộ dữ liệu lưu qua **SharedPreferences** (vị trí, danh sách địa điểm, cache API, lịch sử chat AI). Giới hạn **20 địa điểm** đã lưu.
 
 ---
 
-## 1. Luồng nghiệp vụ (theo spec sản phẩm)
+## 1. Danh sách màn hình (Activity)
 
-### 1.1 Mở app lần đầu / chưa có ngữ cảnh đủ
+| Activity | Vai trò |
+|----------|---------|
+| `MainActivity` | Màn khởi động: kiểm tra vị trí đã lưu → Home hoặc hỏi GPS |
+| `HomeActivity` | Trang chủ: hero thời tiết, biểu đồ 24h, dự báo 3 ngày, các chỉ số |
+| `SearchActivity` | Tìm kiếm địa điểm bằng WeatherAPI |
+| `LocationManagementActivity` | Quản lý danh sách địa điểm đã lưu (CRUD tối đa 20) |
+| `PreviewActivity` | Xem trước thời tiết địa điểm trước khi thêm |
+| `FiveDayForecastActivity` | Chi tiết dự báo 3 ngày |
+| `VisualMapActivity` | Bản đồ dự báo thời tiết (Windy.com embed qua WebView) |
+| `AIActivity` | Trợ lý AI thời tiết (OpenAI Chat Completions) |
 
-1. Hiện **popup** hỏi người dùng có cho phép app **truy cập vị trí hiện tại** không (`MainActivity` + `MaterialAlertDialogBuilder`).
-
-2. **Trường hợp 1 — Đồng ý:** xin quyền → lấy **lat, lon** (`LocationHelper` + Fused Location) → lưu làm vị trí hiện tại (`WeatherPreferences.setCurrentLocation`) → vào **`HomeActivity`**. **Gọi API** `forecast.json` qua `WeatherRepository` + `WeatherApiService` (`q=lat,lon`), Gson map vào `ForecastResponse`; cache/throttle trong `WeatherPreferences`.
-
-3. **Trường hợp 2 — Từ chối:** mở **`SearchActivity`** (onboarding) để người dùng **tìm địa điểm** thủ công.  
-   - Nếu người dùng bấm **Hủy** (hoặc back tương đương) trên màn Search onboarding: **`finishAffinity()`** → thoát app (đúng spec “out app”).  
-   - Ngược lại: chọn thành phố / GPS → có lat/lon → **`PreviewActivity`** → sau khi xác nhận có thể vào Home (onboarding: FAB → `HomeActivity` + xóa stack onboarding).
-
-4. Sau khi đã có **lat/lon** (GPS hoặc chọn từ search/preview), luồng chung: **`HomeActivity`** hiển thị dự báo; kéo xuống xem **chi tiết** trong cùng trang. Nút **dấu +** (và chỗ tương đương “đổi vị trí”) mở **`LocationManagementActivity`**.
-
-### 1.2 Từ Home — quản lý / đổi vị trí
-
-- Góc trên có **dấu +** → **`LocationManagementActivity`** (nền **đen**, chữ sáng).
-- Trên màn quản lý: **thanh search** (ô˛) → chạm → **`SearchActivity`** (luồng quản lý).  
-  Tìm xong, chọn một địa điểm → **`PreviewActivity`** (xem trước).
-
-### 1.3 Trang xem trước (`PreviewActivity`)
-
-- **Giao diện:** khối **“Hôm nay”** (theo giờ) — `widget_today_hourly_block` + `BlurTarget`, **cùng kiểu** như phần trên màn **Dự báo 5 ngày**; **dưới** giữ FAB **+** và **“Thêm vào trang home”** (không dùng bảng 5 cột trên Preview).
-- **Luồng quản lý:** bấm thêm → lưu vào danh sách (`addOrUpdateLocation`) → **quay lại** `LocationManagementActivity` (đóng Preview; Search đã `finish` khi mở Preview nên stack thường là: Quản lý → Preview).
-- **Luồng onboarding (lần đầu từ chối GPS):** FAB → lưu current + (tuỳ) list → **`HomeActivity`** với `CLEAR_TASK` / `finishAffinity` theo code hiện tại.
-
-### 1.4 Quản lý danh sách thành phố (`LocationManagementActivity`)
-
-- **Giữ** (long-press) một item: vào chế độ **chọn nhiều** → tick từng ô → **Xóa đã chọn** / **Xóa tất cả** / **Xong**.
-- **Bấm** vào một địa điểm (khi không ở chế độ chọn): **“dùng vị trí này”** → truyền **lat/lon** về Home (`HomeActivity.startClearTop` + `LocationContract`) → **tự động quay Home** → `HomeActivity` gọi lại API qua `WeatherRepository`.
-
-### 1.5 Màn dự báo 5 ngày chi tiết (`FiveDayForecastActivity`)
-
-- Mở từ Home (nút chi tiết); vẫn là một **trang riêng** trong project, truyền tọa độ qua `LocationContract`.
+Tất cả Activity khai báo `android:screenOrientation="portrait"` trong `AndroidManifest.xml`.
 
 ---
 
-## 2. Chuẩn truyền lat / lon — `LocationContract`
+## 2. Luồng nghiệp vụ
 
-- `EXTRA_LAT`, `EXTRA_LON`, `EXTRA_DISPLAY_NAME` — dùng `putLocation` / `readLat` / `readLon` / `readDisplayName`.
-- `EXTRA_FLOW_MODE`: `FLOW_ONBOARDING` vs `FLOW_MANAGEMENT` để `PreviewActivity` biết FAB đi về Home hay chỉ thêm list.
-- `HomeActivity.EXTRA_*` là **alias** cùng key với `LocationContract`.
+### 2.1 Khởi động app
 
----
+1. `MainActivity` kiểm tra `WeatherPreferences.hasCurrentLocation()`:
+   - **Có** → `HomeActivity.startClearTask` + `finish()`.
+   - **Chưa có** → `MaterialAlertDialogBuilder` hỏi cho phép GPS.
 
-## 3. SharedPreferences — `WeatherPreferences`
+2. **Đồng ý GPS**: xin quyền → `LocationHelper.fetchCurrent` → lấy lat/lon → `LocationNameResolver` tìm tên → `WeatherPreferences.setCurrentLocation` + `addOrUpdateLocation` (lưu ngay vào danh sách) → `HomeActivity`.
 
-| Vùng | Mục đích |
-|------|----------|
-| **Vị trí hiện tại** | `current_lat`, `current_lon`, `current_name` |
-| **CRUD danh sách (tối đa 20)** | JSON `locations_json` (`SavedLocation`), thêm/sửa/xóa/xóa hết |
-| **Cache API** | `cache_body_*`, `cache_time_*` |
-| **Giãn cách gọi API** | `api_last_*`, `canCallApi`, `markApiCalled` |
+3. **Từ chối GPS**: `SearchActivity.startOnboarding` + `finish()`.
+   - Bấm **Hủy** / back trong onboarding → `finishAffinity()` thoát app.
+   - Chọn địa điểm → `PreviewActivity` (flow onboarding).
 
----
+### 2.2 Home — hiển thị thời tiết
 
-## 4. API WeatherAPI.com trong project
+`HomeActivity` khi khởi động hoặc nhận Intent mới:
+- Đọc lat/lon từ Intent hoặc `WeatherPreferences`.
+- Hiển thị tên địa điểm + placeholder, gọi `WeatherRepository.fetchForecastForHome`.
+- `bindForecastToHome`: cập nhật nhiệt độ, điều kiện, icon hero (Glide + WeatherAPI CDN), AQI, biểu đồ 24h (dữ liệu thật từ `forecastday[0].hour`), dự báo 3 ngày, các chỉ số (UV, độ ẩm, cảm giác, gió, mặt trời mọc/lặn, áp suất).
+- Background gradient + Lottie animation theo điều kiện thời tiết (`WeatherConditionTheme`).
+- Kéo **SwipeRefresh** → làm mới dữ liệu (bỏ qua throttle).
+- Cuộn xuống: hero (icon + nhiệt độ + AQI) và tên địa điểm fade out mượt qua `applyHeroVisibility` + `MotionLayout`.
 
-- **Base URL:** `https://api.weatherapi.com/v1/` (`WeatherApiClient`). Tài liệu: [WeatherAPI Docs](https://www.weatherapi.com/docs/).
-- **Khóa API:** `WEATHERAPI_KEY` trong `local.properties` → `BuildConfig.WEATHERAPI_KEY`; OkHttp interceptor gắn query **`key`** mọi request.
-- **Interface:** `WeatherApiService` — `GET current.json` (thời tiết hiện tại), `GET forecast.json` (dự báo, tham số `days` 1–14 theo gói). Tham số **`q`**: theo docs có thể là **`lat,lon`** (vd `21.0285,105.8542`), tên thành phố, v.v. — helper `WeatherApiQuery.latLon(lat, lon)`.
-- **Icon:** CDN `cdn.weatherapi.com` hoặc trường `condition.icon` trong JSON — helper `WeatherApiIcons` (Glide trong adapter / Home).
-- **Parse:** Retrofit + Gson: `WeatherApiService` trả về `Call<CurrentWeatherResponse>` / `Call<ForecastResponse>`; POJO trong `model.api` (`ForecastResponse`, `CurrentDto`, `ConditionDto`, …). **Không** dùng `ResponseBody` + parse tay cho hai endpoint này.
-- **Tầng gọi mạng tập trung:** `data/WeatherRepository.java` — `HomeActivity` `enqueue` forecast, **hủy `Call` trong `onDestroy`** để tránh cập nhật UI sau khi Activity đóng; kéo **SwipeRefresh** bỏ qua throttle (`bypassThrottle`).
+### 2.3 Tìm kiếm địa điểm (`SearchActivity`)
 
----
+- Giao diện: nút back + input search full-width. Không có preset locations.
+- Nút GPS → dùng vị trí hiện tại.
+- Nhập text → gọi WeatherAPI Search → kết quả qua `SearchResultAdapter`.
+- Chọn kết quả → `PreviewActivity` + `finish()`.
+- Mode **onboarding** (`FLOW_ONBOARDING`): back → `finishAffinity()`.
+- Mode **quản lý** (`FLOW_MANAGEMENT`): back → `finish()` + slide out.
 
-## 5. Công nghệ & thư viện (Gradle)
+### 2.4 Xem trước địa điểm (`PreviewActivity`)
 
-- AndroidX: AppCompat, Material, ConstraintLayout, RecyclerView, CardView, SwipeRefreshLayout, CoordinatorLayout, **ViewPager2** (giữ dependency — có thể dùng sau; Preview **không** dùng tab nữa).
-- **BlurView** (Dimezis, JitPack `version-3.2.0`, package `eightbitlab.com.blurview`) + **BlurTarget** trên màn forecast / layout liên quan.
-- **Retrofit 2**, Gson converter, **OkHttp** logging.
-- **Play Services Location**.
-- **Glide**, **MPAndroidChart**, **Lottie** (nếu có màn dùng).
+- Nhận lat/lon/tên + `flowMode` qua `LocationContract`.
+- **Onboarding**: FAB → `setCurrentLocation` + `addOrUpdateLocation` + `HomeActivity.startClearTask` + `finishAffinity()`.
+- **Quản lý**: `addOrUpdateLocation` (tối đa 20) rồi `finish()` về `LocationManagementActivity`.
 
----
+### 2.5 Quản lý địa điểm (`LocationManagementActivity`)
 
-## 6. Animation đã dùng
+- `RecyclerView` + `SavedLocationsAdapter`: mỗi item có gradient nền theo điều kiện thời tiết, icon WeatherAPI CDN, nhiệt độ, điều kiện.
+- Nút search compact (góc phải) → `SearchActivity.startForManagement`.
+- **Long-press** item → chế độ chọn nhiều → Xóa đã chọn / Xóa tất cả / Xong.
+- **Tap** item (không selection) → `setCurrentLocation` + `HomeActivity.startClearTop` + `finish()`.
 
-- **MotionLayout** hero Home (`scene_home_hero.xml`): tiến trình gắn với cuộn `NestedScrollView`; **easeInOut** trên transition; **không** `GONE` hero (tránh co giật layout); tiến trình qua **smoothstep** + khoảng cuộn dài hơn (`HERO_HIDE_DISTANCE_PX`).
-- **Chuyển Activity:** `ActivityTransitions.slideIn` / `slideOut`.
-- **Scale nhẹ** nút (Home).
-- **`DepthPageTransformer`**: class sẵn có cho ViewPager2 — **hiện không gắn Preview** ( một màn Preview).
+### 2.6 Bản đồ dự báo (`VisualMapActivity`)
 
----
+- Mở từ Home bằng nút "Xem bản đồ dự báo".
+- Nhúng **Windy.com** (`embed.windy.com/embed2.html`) qua WebView với tọa độ hiện tại, overlay mây, zoom 8.
 
-## 7. Cấu trúc package (Java)
+### 2.7 Trợ lý AI (`AIActivity`)
 
-- **`api/`** — `WeatherApiClient` (Retrofit singleton, OkHttp + query `key`), `WeatherApiService` (`current.json`, `forecast.json` → POJO), `WeatherApiIcons`, `WeatherApiQuery`.
-- **`location/`** — `LocationContract`: chuẩn Intent cho lat/lon/tên/flow.
-- **`model/`** — `SavedLocation`: danh sách địa điểm; `buildId` đồng bộ cache.
-- **`model.api/`** — DTO Gson cho JSON WeatherAPI: `ForecastResponse`, `CurrentWeatherResponse`, `CurrentDto`, `ConditionDto`, `ApiForecastDayDto`, …
-- **`prefs/`** — `WeatherPreferences`: SharedPreferences, CRUD danh sách + current + cache API.
-- **`search/`** — `FakeGeocoding`: dữ liệu giả đến khi nối geocoding thật.
-- **`data/`** — `PopularCity`, …; **`WeatherRepository`**: gọi `getForecast`, cache Gson string, throttle; Activity khác có thể tái sử dụng.
-- **`ui/`** — Adapter (`DailyForecastAdapter`, `ForecastDayAdapter`, …), `TodayHourlySectionHelper`, `Forecast5dSamples`, `DepthPageTransformer`, …
-- **`util/`** — `LocationHelper`, `ChartSamples`, `ActivityTransitions`, …
-- **Activity gốc** — `Main`, `Home`, `Search`, `Preview`, `LocationManagement`, `FiveDayForecast`.
-
-**Layout dùng chung:**
-
-- `widget_forecast_5d_table.xml` — tiêu đề “Dự báo 5 ngày” + lịch + `RecyclerView` + ghi chú. Chỉ **`FiveDayForecastActivity`**. **`PreviewActivity`** chỉ dùng `widget_today_hourly_block` (giờ).
-- `item_daily_forecast_line.xml` — **3 cột weight 1**: ngày (trái) | icon + note (giữa) | nhiệt độ (phải).
-- `item_forecast_day_row.xml` — **Home**: chỉ nhãn ngày + thấp + thanh range + cao (**đã bỏ `ImageView` icon**).
+- Gọi lại `WeatherRepository` để lấy dữ liệu thời tiết hiện tại làm ngữ cảnh cho AI.
+- Trong lúc tải: spinner, khóa input.
+- Sau khi tải xong và **không có lịch sử**: hiện lời chào + 3 câu hỏi gợi ý.
+- Sau khi tải xong và **có lịch sử hợp lệ**: hiện lại lịch sử chat, ẩn lời chào/gợi ý.
+- Gửi tin → `WeatherChatRepository` gọi OpenAI Chat Completions.
+- Nút **new chat** (góc trên phải) → xóa lịch sử, reset về màn chào.
+- **Lịch sử chat**: lưu vào `SharedPreferences` (`chat_history`) khi `onStop`, tải lại khi `onCreate` nếu chưa quá **20 phút** (so sánh với `System.currentTimeMillis()`). Hết hạn hoặc bấm new chat → tự xóa.
 
 ---
 
-## 8. API WeatherAPI.com
+## 3. Lưu trữ dữ liệu (SharedPreferences)
 
-**Nguồn:** [WeatherAPI.com](https://www.weatherapi.com/docs/) — REST JSON v1.  
-Base URL trong `WeatherApiClient`: `https://api.weatherapi.com/v1/`
+### 3.1 `WeatherPreferences` — file `weather_forcast_prefs`
 
-**Khóa API:**
+| Nhóm | Key | Mô tả |
+|------|-----|-------|
+| Vị trí hiện tại | `current_lat`, `current_lon`, `current_name` | Tọa độ + tên đang hiển thị trên Home |
+| Danh sách địa điểm | `locations_json` | Gson `List<SavedLocation>`, tối đa 20 |
+| Cache body API | `cache_body_<key>` | JSON response WeatherAPI |
+| Thời điểm cache | `cache_time_<key>` | Millisecond |
+| Throttle | `api_last_<key>` | Tránh gọi API quá dày |
 
-1. Đăng ký tại [weatherapi.com](https://www.weatherapi.com/) và lấy API key trong tài khoản.
-2. Trong `local.properties` (thư mục gốc project, không commit):  
-   `WEATHERAPI_KEY=your_key_here`
-3. `app/build.gradle.kts` sinh `BuildConfig.WEATHERAPI_KEY`.
+**Quy tắc**: mọi đọc/ghi liên quan đến vị trí, danh sách, cache đều qua `WeatherPreferences`. Không `getSharedPreferences` rải rác.
 
-**Tham số chính (theo docs):**
+### 3.2 `ChatHistoryStore` — file `chat_history`
 
-- **`key`** — bắt buộc; app gắn tự động qua OkHttp interceptor (không cần thêm vào chữ ký hàm Retrofit).
-- **`q`** — bắt buộc: vị trí. Với tọa độ GPS dùng chuỗi **`lat,lon`** (vd `48.8567,2.3508`). Dùng `WeatherApiQuery.latLon(lat, lon)`.
-- **`days`** — chỉ `forecast.json`: số ngày dự báo (1–14, tùy gói).
-- **`lang`** — tùy chọn (vd `vi`) để `condition.text` theo ngôn ngữ.
+| Key | Nội dung |
+|-----|----------|
+| `saved_at` | Timestamp lúc lưu (ms) |
+| `chat_items` | Gson `List<ChatItem>` — tin nhắn hiển thị |
+| `ai_history` | Gson `List<OpenAiMessage>` — context gửi lên AI |
 
-**Endpoint trong code:**
-
-- `WeatherApiService.getCurrent(query, lang)` → `GET current.json`
-- `WeatherApiService.getForecast(query, days, lang)` → `GET forecast.json`
-
-**Gọi từ code (ví dụ):**
-
-```java
-import com.example.weatherforcastapp.model.api.CurrentWeatherResponse;
-import com.example.weatherforcastapp.model.api.ForecastResponse;
-// ...
-WeatherApiService api = WeatherApiClient.api();
-String q = WeatherApiQuery.latLon(lat, lon);
-Call<CurrentWeatherResponse> current = api.getCurrent(q, "vi");
-Call<ForecastResponse> forecast = api.getForecast(q, 5, "vi");
-// enqueue → response.body().getCurrent().getTempC(), getForecast().getForecastday(), …
-```
-
-Trên Home, ưu tiên dùng **`WeatherRepository.fetchForecastForHome`** (một request `forecast.json` đã có cả `current` + `forecastday`).
-
-**Icon:** trường `condition.icon` (URL relative `//cdn...`) hoặc `condition.code` — `WeatherApiIcons.url(...)` tạo URL cho Glide; mẫu trong `Forecast5dSamples` / `TodayHourlySectionHelper` dùng mã số WeatherAPI.
+Hết hạn sau **20 phút** (`EXPIRY_MS = 20 * 60 * 1000L`). Tự xóa khi load nếu hết hạn.
 
 ---
 
-## 9. SharedPreferences — chỗ nào dùng, làm CRUD / cache thế nào
+## 4. Truyền dữ liệu giữa các màn — `LocationContract`
 
-Lớp tập trung: **`WeatherPreferences`** (`prefs/WeatherPreferences.java`), file XML: `weather_forcast_prefs`.
-
-| Nhóm | Key / hành vi | Ghi chú |
-|------|----------------|---------|
-| Vị trí đang xem | `current_lat`, `current_lon`, `current_name` | `setCurrentLocation`, `getCurrent*`, `clearCurrentLocation`, `hasCurrentLocation` |
-| Danh sách địa điểm (tối đa **20**) | `locations_json` (Gson `List<SavedLocation>`) | `getSavedLocations`, `addOrUpdateLocation`, `removeLocation`, `removeLocations`, `removeAllLocations` |
-| Cache body API | `cache_body_<key>` | `putApiResponseCache`, `getCachedApiBody` — `key` nên dùng `cacheKeyForCoords(lat,lon)` |
-| Thời điểm cache | `cache_time_<key>` | `getCachedApiTime` |
-| Throttle gọi API | `api_last_<key>` | `canCallApi`, `markApiCalled` |
-
-**Quy tắc:** Bất kỳ chỗ nào cần “địa điểm user đã chọn” hoặc “đừng gọi API quá sớm” đều nên đi qua lớp này thay vì tự `getSharedPreferences` rải rác.
+- Constants: `EXTRA_LAT`, `EXTRA_LON`, `EXTRA_DISPLAY_NAME`, `EXTRA_FLOW_MODE`.
+- Values: `FLOW_ONBOARDING`, `FLOW_MANAGEMENT`.
+- Helpers: `putLocation`, `readLat`, `readLon`, `readDisplayName`.
+- `HomeActivity.EXTRA_*` là alias cùng key với `LocationContract`.
 
 ---
 
-## 10. Luồng dữ liệu lat/lon (tóm tắt)
+## 5. API WeatherAPI.com
 
-1. GPS / Search / Preview FAB → cập nhật `WeatherPreferences.setCurrentLocation` và/hoặc `addOrUpdateLocation`.
-2. Mở màn khác cần tọa độ → `Intent` kèm `LocationContract.putLocation`, hoặc đọc từ prefs sau khi Home đã lưu.
-3. Gọi API → luôn dùng cùng một cặp `lat`/`lon` với màn đang hiển thị (tránh lệch Preview vs Home).
-
+- **Base URL:** `https://api.weatherapi.com/v1/`
+- **Key:** `WEATHERAPI_KEY` trong `local.properties` → `BuildConfig.WEATHERAPI_KEY`, OkHttp Interceptor gắn tự động vào mọi request.
+- **Free tier:** 1.000.000 calls/tháng — đủ cho app dev/personal.
+- **Endpoint chính:**
+  - `GET forecast.json` — dùng cho cả Home lẫn AI context (`WeatherRepository.fetchForecastForHome`), trả về `ForecastResponse` (current + forecastday + hour).
+  - `GET search.json` — tìm kiếm địa điểm trong `SearchActivity`.
+- **Icon:** `condition.icon` (URL `//cdn.weatherapi.com/...`) + `WeatherApiIcons.url(icon, isDay, sizePx)` → Glide load. `SIZE_LIST = 128`, `SIZE_HERO = 256`.
+- **Parse:** Retrofit + Gson, POJO trong package `model.api`.
 
 ---
+
+## 6. Hệ thống giao diện
+
+### 6.1 Màu sắc & theme
+
+- Background Home: `GradientShiftBackgroundView` (gradient động) + `LottieAnimationView` (animation thời tiết overlay).
+- Gradient màu sắc theo điều kiện: `WeatherConditionTheme.resolve(conditionCode, isDaytime)` → `Colors(top, mid, bottom)`.
+- Animation Lottie: `WeatherConditionTheme.resolveAnimation` → `SUNNY/CLOUDY/RAINY/STORM/NIGHT` → file raw `.json`.
+- Glass cards: `glass_surface` (`#22FFFFFF`), `glass_stroke` (`#40FFFFFF`) — frosted glass trên nền tối.
+- Text: `text_primary_on_dark` (trắng), `text_secondary_on_dark` (trắng mờ).
+
+### 6.2 Icon
+
+- **Navigation/UI**: bộ icon Lucide-style, stroke width 2, round caps/joins — vector drawable `ic_back_24`, `ic_search_24`, `ic_add_24`, `ic_settings_24`, `ic_map_24`, `ic_send_24`, `ic_ai`, `ic_new_chat`.
+- **Thời tiết**: icon từ WeatherAPI CDN load bằng Glide — dùng nhất quán trên cả Home hero (`SIZE_HERO`) lẫn danh sách vị trí (`SIZE_LIST`).
+- **Chỉ số metric**: `ic_metric_uv/humidity/feels/wind/sun/pressure`.
+
+### 6.3 Item danh sách vị trí
+
+- Background gradient động theo điều kiện thời tiết: `SavedLocationsAdapter.applyWeatherGradient` — `GradientDrawable.Orientation.TL_BR`, corner radius 18dp.
+- Condition code 113 → sunny (cyan→navy); 116–143 → cloudy (gray-blue); ≥176 → rainy (dark indigo).
+
+---
+
+## 7. Biểu đồ 24h (MPAndroidChart)
+
+- `ChartSamples.styleHourlyChart` — cấu hình tĩnh (trục, cảm ứng, legend).
+- Dữ liệu thật: `HomeActivity.updateHourlyChart(entries, labels)` — X là sequential index (0,1,2,...), labels là giờ thực từ `HourItemDto.getTime()` (substring 11–16 của chuỗi `"yyyy-MM-dd HH:mm"`), lấy mỗi 3 giờ.
+- Formatter set tại thời điểm `updateHourlyChart` để tránh glitch khi scroll.
+- `setVisibleXRangeMaximum(4f)` — hiện 4 điểm, kéo ngang để xem thêm.
+- Y-axis: `setTextColor(Color.WHITE)`, không disable label. Dataset: `setDrawValues(false)` — không in số trên line.
