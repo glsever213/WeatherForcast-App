@@ -53,7 +53,7 @@ public final class WeatherRepository {
             @Nullable LocationUpdateListener listener
     ) {
         String q = WeatherApiQuery.latLon(loc.getLatitude(), loc.getLongitude());
-        WeatherApiClient.api().getForecast(q, 1, "vi").enqueue(new Callback<ForecastResponse>() {
+        WeatherApiClient.api().getForecast(q, 1, "no", "vi").enqueue(new Callback<ForecastResponse>() {
             @Override
             public void onResponse(@NonNull Call<ForecastResponse> call, @NonNull Response<ForecastResponse> response) {
                 ForecastResponse body = response.body();
