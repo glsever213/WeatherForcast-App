@@ -3,9 +3,14 @@ package com.example.weatherforcastapp.util;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.location.LocationManager;
+import android.os.Build;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 
+import com.example.weatherforcastapp.R;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.Priority;
@@ -20,7 +25,8 @@ public final class LocationHelper {
     public interface Callback {
         void onLocation(double lat, double lon);
 
-        void onError();
+        /** reason: thông báo người dùng đọc được, đã phân biệt theo nguyên nhân. */
+        void onError(@NonNull String reason);
     }
 
     private LocationHelper() {
@@ -31,13 +37,42 @@ public final class LocationHelper {
                 || ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
     }
 
+    /** True nếu công tắc Location của hệ thống đang bật (có ít nhất một provider). */
+    public static boolean isLocationEnabled(@NonNull Context context) {
+        LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        if (lm == null) {
+            return false;
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            return lm.isLocationEnabled();
+        }
+        return lm.isProviderEnabled(LocationManager.GPS_PROVIDER)
+                || lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+    }
+
+    /** True nếu thiết bị có Google Play Services (fused provider cần cái này). */
+    public static boolean hasGooglePlayServices(@NonNull Context context) {
+        return GoogleApiAvailability.getInstance()
+                .isGooglePlayServicesAvailable(context) == ConnectionResult.SUCCESS;
+    }
+
     public static void fetchCurrent(@NonNull Context context, @NonNull Callback callback) {
         fetchCurrent(context, GPS_TIMEOUT_MS, callback);
     }
 
     public static void fetchCurrent(@NonNull Context context, long timeoutMs, @NonNull Callback callback) {
+        // (Lỗi 4) Thiếu Google Play Services → fused provider không chạy được.
+        if (!hasGooglePlayServices(context)) {
+            callback.onError(context.getString(R.string.loc_err_no_play_services));
+            return;
+        }
         if (!hasPermission(context)) {
-            callback.onError();
+            callback.onError(context.getString(R.string.loc_err_permission));
+            return;
+        }
+        // (Lỗi 3) Công tắc Location của hệ thống đang tắt → không thể có fix.
+        if (!isLocationEnabled(context)) {
+            callback.onError(context.getString(R.string.loc_err_location_off));
             return;
         }
 
@@ -53,13 +88,15 @@ public final class LocationHelper {
             if (!done[0]) {
                 done[0] = true;
                 cts.cancel(); // hủy getCurrentLocation đang chờ
-                callback.onError();
+                callback.onError(context.getString(R.string.loc_err_timeout));
             }
         };
         mainHandler.postDelayed(timeoutRunnable, timeoutMs);
 
         try {
-            client.getCurrentLocation(Priority.PRIORITY_BALANCED_POWER_ACCURACY, cts.getToken())
+            // (Lỗi 1) Dùng HIGH_ACCURACY để chủ động bật GPS lấy fix mới,
+            // tránh trường hợp BALANCED trả null khi không có wifi/cell.
+            client.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, cts.getToken())
                     .addOnSuccessListener(location -> {
                         if (done[0]) return;
                         if (location != null) {
@@ -75,13 +112,15 @@ public final class LocationHelper {
                             if (last != null) {
                                 callback.onLocation(last.getLatitude(), last.getLongitude());
                             } else {
-                                callback.onError();
+                                // (Lỗi 1 & 2) Cả fix mới lẫn cache đều null
+                                // (hay gặp trên emulator chưa set vị trí).
+                                callback.onError(context.getString(R.string.loc_err_unavailable));
                             }
                         }).addOnFailureListener(e -> {
                             if (done[0]) return;
                             done[0] = true;
                             mainHandler.removeCallbacks(timeoutRunnable);
-                            callback.onError();
+                            callback.onError(context.getString(R.string.loc_err_unavailable));
                         });
                     })
                     .addOnFailureListener(e -> {
@@ -94,18 +133,19 @@ public final class LocationHelper {
                                     if (last != null) {
                                         callback.onLocation(last.getLatitude(), last.getLongitude());
                                     } else {
-                                        callback.onError();
+                                        callback.onError(context.getString(R.string.loc_err_unavailable));
                                     }
                                 })
                                 .addOnFailureListener(e2 -> {
                                     if (done[0]) return;
                                     done[0] = true;
                                     mainHandler.removeCallbacks(timeoutRunnable);
-                                    callback.onError();
+                                    callback.onError(context.getString(R.string.loc_err_unavailable));
                                 });
                     });
         } catch (SecurityException e) {
-            callback.onError();
+            mainHandler.removeCallbacks(timeoutRunnable);
+            callback.onError(context.getString(R.string.loc_err_permission));
         }
     }
 }

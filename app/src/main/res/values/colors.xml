@@ -25,4 +25,8 @@
     <color name="glass_stroke">#66FFFFFF</color>
     <color name="glass_highlight">#40FFFFFF</color>
     <color name="glass_stroke_on_dark">#55FFFFFF</color>
+
+    <!-- AI chat -->
+    <color name="chat_bubble_user">#4A91FF</color>
+    <color name="chat_bubble_bot">#33445F</color>
 </resources>

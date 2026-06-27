@@ -57,5 +57,11 @@
             android:exported="false"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.WeatherForcastApp.Forecast" />
+
+        <activity
+            android:name=".AIActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.WeatherForcastApp.Black" />
     </application>
 </manifest>

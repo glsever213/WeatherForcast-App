@@ -10,6 +10,7 @@ if (localPropertiesFile.exists()) {
     localPropertiesFile.inputStream().use { localProperties.load(it) }
 }
 val weatherApiKey: String = localProperties.getProperty("WEATHERAPI_KEY", "")
+val groqApiKey: String = localProperties.getProperty("GROQ_API_KEY", "")
 
 android {
     namespace = "com.example.weatherforcastapp"
@@ -23,6 +24,7 @@ android {
         versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "WEATHERAPI_KEY", "\"${weatherApiKey.replace("\\", "\\\\").replace("\"", "\\\"")}\"")
+        buildConfigField("String", "GROQ_API_KEY", "\"${groqApiKey.replace("\\", "\\\\").replace("\"", "\\\"")}\"")
     }
 
     buildTypes {

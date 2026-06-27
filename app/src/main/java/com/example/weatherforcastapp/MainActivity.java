@@ -117,9 +117,9 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onError() {
+            public void onError(@NonNull String reason) {
                 binding.progressMain.setVisibility(android.view.View.GONE);
-                Toast.makeText(MainActivity.this, R.string.search_hint, Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, reason, Toast.LENGTH_LONG).show();
                 goSearchOnboarding();
             }
         });

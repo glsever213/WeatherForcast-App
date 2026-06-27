@@ -104,8 +104,7 @@ public class HomeActivity extends AppCompatActivity {
                     }).start()
             ).start();
         });
-        binding.buttonMore.setOnClickListener(v ->
-                Toast.makeText(this, R.string.frame_note, Toast.LENGTH_SHORT).show());
+        binding.buttonAiChat.setOnClickListener(v -> AIActivity.start(this));
 
         binding.buttonOpenForecastDetail.setOnClickListener(this::openFiveDayForecastScreen);
 
@@ -358,11 +357,15 @@ public class HomeActivity extends AppCompatActivity {
         set.setCircleHoleColor(getColor(R.color.chart_line));
         set.setDrawValues(true);
         set.setValueTextColor(Color.DKGRAY);
+        set.setValueTextSize(11f);
         set.setMode(LineDataSet.Mode.CUBIC_BEZIER);
 
         LineData data = new LineData(set);
 
         binding.chartHourlyTemp.setData(data);
+        // Giãn trục X để chữ không bị chen chúc; phần dư tràn sang phải, người dùng kéo để xem.
+        binding.chartHourlyTemp.setVisibleXRangeMaximum(9f);
+        binding.chartHourlyTemp.moveViewToX(0f);
         binding.chartHourlyTemp.invalidate();
     }
 

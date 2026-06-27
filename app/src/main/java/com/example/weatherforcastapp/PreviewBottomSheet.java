@@ -25,6 +25,7 @@ import com.example.weatherforcastapp.model.api.ForecastResponse;
 import com.example.weatherforcastapp.model.api.HourItemDto;
 import com.example.weatherforcastapp.prefs.WeatherPreferences;
 import com.example.weatherforcastapp.ui.TodayHourlySectionHelper;
+import com.example.weatherforcastapp.util.ActivityTransitions;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
@@ -191,14 +192,15 @@ public class PreviewBottomSheet extends BottomSheetDialogFragment {
         WeatherPreferences prefs = WeatherPreferences.get(requireContext());
         SavedLocation loc = new SavedLocation(cityName, lat, lon, getString(R.string.frame_note));
 
-//        if (flowMode == LocationContract.FLOW_ONBOARDING) {
-//            prefs.setCurrentLocation(lat, lon, cityName);
-//            prefs.addOrUpdateLocation(loc);
-//            dismiss();
-//            HomeActivity.startClearTask(requireContext(), lat, lon, cityName);
-//            requireActivity().finishAffinity();
-//            return;
-//        }
+        // Luồng onboarding (lần đầu mở app, chưa có vị trí): thêm xong phải mở thẳng Home.
+        if (flowMode == LocationContract.FLOW_ONBOARDING) {
+            prefs.setCurrentLocation(lat, lon, cityName);
+            prefs.addOrUpdateLocation(loc);
+            dismiss();
+            HomeActivity.startClearTask(requireContext(), lat, lon, cityName);
+            requireActivity().finishAffinity();
+            return;
+        }
 
         boolean added = prefs.addOrUpdateLocation(loc);
         if (!added) {
@@ -206,8 +208,11 @@ public class PreviewBottomSheet extends BottomSheetDialogFragment {
             return;
         }
 
-        markFabAsSaved();
-        Toast.makeText(requireContext(), "Đã thêm địa điểm", Toast.LENGTH_SHORT).show();
+        Toast.makeText(requireContext(), R.string.location_added, Toast.LENGTH_SHORT).show();
         dismiss();
+        // Thêm xong → quay lại danh sách vị trí đã thêm (đóng màn Search đang host preview).
+        androidx.fragment.app.FragmentActivity host = requireActivity();
+        host.finish();
+        ActivityTransitions.slideOut(host);
     }
 }

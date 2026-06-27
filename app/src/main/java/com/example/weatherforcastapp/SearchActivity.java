@@ -1,5 +1,7 @@
 package com.example.weatherforcastapp;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -8,6 +10,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.example.weatherforcastapp.data.PopularCities;
@@ -31,6 +34,8 @@ public class SearchActivity extends AppCompatActivity {
     public static final String EXTRA_MODE = "extra_mode";
     public static final int MODE_ONBOARDING = 1;
     public static final int MODE_MANAGEMENT = 2;
+
+    private static final int REQ_LOCATION = 2001;
 
     private ActivitySearchBinding binding;
     private int mode = MODE_ONBOARDING;
@@ -68,28 +73,54 @@ public class SearchActivity extends AppCompatActivity {
 
         setupPopularCities();
 
-        binding.chipLocate.setOnClickListener(v -> {
-            if (!LocationHelper.hasPermission(this)) {
-                Toast.makeText(this, R.string.location_permission_message, Toast.LENGTH_SHORT).show();
-                return;
+        binding.chipLocate.setOnClickListener(v -> locateCurrent());
+    }
+
+    private void locateCurrent() {
+        // Chưa có quyền → xin quyền ngay (trước đây chỉ Toast nên bấm nút không có tác dụng).
+        if (!LocationHelper.hasPermission(this)) {
+            ActivityCompat.requestPermissions(
+                    this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
+                    REQ_LOCATION
+            );
+            return;
+        }
+
+        LocationHelper.fetchCurrent(this, new LocationHelper.Callback() {
+            @Override
+            public void onLocation(double lat, double lon) {
+                //Bổ sung: Lấy tên của vị trị hiện tại
+                new Thread(() -> {
+                    String cityName = LocationNameResolver.resolve(SearchActivity.this, lat, lon, getString(R.string.locate_chip));
+
+                    runOnUiThread(() -> openPreview(new PopularCity(cityName, lat, lon, true)));
+                }).start();
             }
-            LocationHelper.fetchCurrent(this, new LocationHelper.Callback() {
-                @Override
-                public void onLocation(double lat, double lon) {
-                    //Bổ sung: Lấy tên của vị trị hiện tại
-                    new Thread(() -> {
-                        String cityName = LocationNameResolver.resolve(SearchActivity.this, lat, lon, getString(R.string.locate_chip));
 
-                        runOnUiThread(() -> openPreview(new PopularCity(cityName, lat, lon, true)));
-                    }).start();
-                }
-
-                @Override
-                public void onError() {
-                    Toast.makeText(SearchActivity.this, R.string.search_hint, Toast.LENGTH_SHORT).show();
-                }
-            });
+            @Override
+            public void onError(@NonNull String reason) {
+                Toast.makeText(SearchActivity.this, reason, Toast.LENGTH_LONG).show();
+            }
         });
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode != REQ_LOCATION) return;
+        boolean granted = false;
+        for (int r : grantResults) {
+            if (r == PackageManager.PERMISSION_GRANTED) {
+                granted = true;
+                break;
+            }
+        }
+        if (granted) {
+            locateCurrent();
+        } else {
+            Toast.makeText(this, R.string.location_permission_message, Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void setupPopularCities() {

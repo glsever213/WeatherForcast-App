@@ -3,6 +3,16 @@
 
     <string name="location_permission_title">Truy cập vị trí</string>
     <string name="location_permission_message">Ứng dụng cần vị trí hiện tại để hiển thị dự báo thời tiết. Bạn có cho phép không?</string>
+
+    <string name="ai_message">Xin chào! Bạn muốn hỏi gì về thời tiết?</string>
+    <string name="ai_askinput">Nhập câu hỏi về thời tiết…</string>
+    <string name="ai_thinking">Đang trả lời…</string>
+    <string name="ai_loading_data">Đang tải dữ liệu thời tiết…</string>
+    <string name="ai_fab_desc">Mở trợ lý thời tiết AI</string>
+    <string name="ai_send_desc">Gửi câu hỏi</string>
+    <string name="ai_suggest_today">Thời tiết hôm nay thế nào?</string>
+    <string name="ai_suggest_3days">Dự báo 3 ngày tới ra sao?</string>
+    <string name="ai_suggest_feels">Hôm nay nên mặc gì cho phù hợp?</string>
     <string name="agree">Đồng ý</string>
     <string name="decline">Từ chối</string>
 
@@ -66,4 +76,9 @@
     <string name="forecast_row_tomorrow">Ngày mai</string>
     <string name="weather_load_failed">Không tải được dữ liệu thời tiết. Kiểm tra mạng hoặc API key.</string>
     <string name="gps_failed_go_search">Không lấy được vị trí GPS. Hãy tìm thủ công.</string>
+    <string name="loc_err_permission">Chưa được cấp quyền vị trí.</string>
+    <string name="loc_err_no_play_services">Thiết bị thiếu Google Play Services nên không định vị được. Hãy tìm thủ công.</string>
+    <string name="loc_err_location_off">Dịch vụ vị trí đang tắt. Hãy bật Location rồi thử lại.</string>
+    <string name="loc_err_timeout">Quá thời gian chờ GPS. Hãy ra chỗ thoáng hoặc thử lại.</string>
+    <string name="loc_err_unavailable">Chưa lấy được vị trí hiện tại. Hãy thử lại hoặc tìm thủ công.</string>
 </resources>
