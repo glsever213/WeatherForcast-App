@@ -12,7 +12,8 @@
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingHorizontal="8dp"
+        android:paddingStart="8dp"
+        android:paddingEnd="12dp"
         android:paddingTop="8dp">
 
         <ImageButton
@@ -22,30 +23,34 @@
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/cancel"
             android:src="@drawable/ic_back_24" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/cardSearchEntry"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minHeight="40dp"
+            android:text="@string/add_location_new"
+            android:textColor="@color/text_primary_on_dark"
+            app:backgroundTint="@color/search_bar_bg"
+            app:cornerRadius="22dp"
+            app:strokeColor="@color/glass_stroke_on_dark" />
     </LinearLayout>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
         android:paddingHorizontal="20dp"
         android:text="@string/manage_cities_title"
         android:textColor="@color/text_primary_on_dark"
         android:textSize="28sp"
         android:textStyle="bold" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/cardSearchEntry"
-        style="@style/Widget.Material3.Button.OutlinedButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end"
-        android:layout_marginEnd="16dp"
-        android:layout_marginTop="16dp"
-        android:text="@string/add_location_new"
-        android:textColor="@color/text_primary_on_dark"
-        app:backgroundTint="@color/search_bar_bg"
-        app:cornerRadius="22dp"
-        app:strokeColor="@color/glass_stroke_on_dark" />
 
     <LinearLayout
         android:id="@+id/barSelectionActions"
